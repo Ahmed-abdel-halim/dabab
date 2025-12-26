@@ -6,7 +6,18 @@ use Illuminate\Database\Eloquent\Model;
 
 class UserLocation extends Model
 {
-    protected $fillable = ['user_id', 'address', 'lat', 'lng'];
+    protected $fillable = [
+        'user_id',
+        'type', // home, work, friend, other
+        'address',
+        'lat',
+        'lng',
+        'is_default'
+    ];
+
+    protected $casts = [
+        'is_default' => 'boolean',
+    ];
 
     public function user()
     {

@@ -22,9 +22,39 @@ class User extends Authenticatable
 
     ];
 
-        public function location()
+    public function location()
     {
-        return $this->hasOne(UserLocation::class);
+        return $this->hasOne(UserLocation::class)->where('is_default', true);
+    }
+
+    public function locations()
+    {
+        return $this->hasMany(UserLocation::class);
+    }
+
+    public function orders()
+    {
+        return $this->hasMany(Order::class);
+    }
+
+    public function rentals()
+    {
+        return $this->hasMany(Rental::class);
+    }
+
+    public function deliveries()
+    {
+        return $this->hasMany(Delivery::class);
+    }
+
+    public function carWashes()
+    {
+        return $this->hasMany(CarWash::class);
+    }
+
+    public function ratings()
+    {
+        return $this->hasMany(Rating::class);
     }
 
 }

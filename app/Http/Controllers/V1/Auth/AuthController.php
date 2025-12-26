@@ -172,12 +172,29 @@ class AuthController extends Controller
         $request->validate([
             'lat'     => 'required|numeric',
             'lng'     => 'required|numeric',
-            'address' => 'nullable|string',
+            'address' => 'required|string',
+            'type'    => 'nullable|in:home,work,friend,other',
+            'is_default' => 'nullable|boolean',
         ]);
 
+        // If this is set as default, unset other defaults
+        if ($request->is_default) {
+            UserLocation::where('user_id', $request->user()->id)
+                ->update(['is_default' => false]);
+        }
+
         $location = UserLocation::updateOrCreate(
-            ['user_id' => $request->user()->id],
-            $request->only('lat', 'lng', 'address')
+            [
+                'user_id' => $request->user()->id,
+                'is_default' => true // Default location
+            ],
+            [
+                'lat' => $request->lat,
+                'lng' => $request->lng,
+                'address' => $request->address,
+                'type' => $request->type ?? 'home',
+                'is_default' => $request->is_default ?? true,
+            ]
         );
 
         return $this->successResponse($location, 'تم تحديث الموقع');
