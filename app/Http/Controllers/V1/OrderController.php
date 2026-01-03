@@ -16,7 +16,7 @@ class OrderController extends Controller
     public function getCategories()
     {
         $categories = OrderCategory::where('is_active', true)->get();
-        return $this->successResponse($categories, 'تم جلب الفئات');
+        return $this->successResponse($categories, __('messages.order.categories_loaded'));
     }
 
     public function createOrder(Request $request)
@@ -50,7 +50,7 @@ class OrderController extends Controller
             'status' => 'pending',
         ]);
 
-        return $this->successResponse($order->load('location', 'category'), 'تم إنشاء الطلب بنجاح');
+        return $this->successResponse($order->load('location', 'category'), __('messages.order.created'));
     }
 
     public function getMyOrders(Request $request)
@@ -66,7 +66,7 @@ class OrderController extends Controller
 
         $orders = $query->latest()->get();
 
-        return $this->successResponse($orders, 'تم جلب الطلبات');
+        return $this->successResponse($orders, __('messages.order.orders_loaded'));
     }
 
     public function getOrder(Request $request, $id)
@@ -75,7 +75,7 @@ class OrderController extends Controller
             ->with('location', 'category', 'rating')
             ->findOrFail($id);
 
-        return $this->successResponse($order, 'تم جلب الطلب');
+        return $this->successResponse($order, __('messages.order.loaded'));
     }
 
     public function updateOrder(Request $request, $id)
@@ -102,7 +102,7 @@ class OrderController extends Controller
             $order->save();
         }
 
-        return $this->successResponse($order->load('location', 'category'), 'تم تحديث الطلب');
+        return $this->successResponse($order->load('location', 'category'), __('messages.order.updated'));
     }
 
     public function cancelOrder(Request $request, $id)
@@ -113,7 +113,7 @@ class OrderController extends Controller
 
         $order->update(['status' => 'cancelled']);
 
-        return $this->successResponse($order, 'تم إلغاء الطلب');
+        return $this->successResponse($order, __('messages.order.cancelled'));
     }
 
     public function trackOrder(Request $request, $id)
@@ -129,17 +129,17 @@ class OrderController extends Controller
             'last_update' => $order->updated_at->format('Y-m-d H:i'),
         ];
 
-        return $this->successResponse($tracking, 'معلومات تتبع الطلب');
+        return $this->successResponse($tracking, __('messages.order.tracking_info'));
     }
 
     private function getEstimatedTime($order)
     {
         if ($order->status === 'pending') {
-            return '30 - 45 دقيقة';
+            return __('messages.order.estimated_time_pending');
         } elseif ($order->status === 'confirmed') {
-            return '20 - 35 دقيقة';
+            return __('messages.order.estimated_time_confirmed');
         } elseif ($order->status === 'in_progress') {
-            return '10 - 20 دقيقة';
+            return __('messages.order.estimated_time_in_progress');
         }
         return null;
     }
@@ -160,7 +160,7 @@ class OrderController extends Controller
             'payment_status' => $request->payment_method === 'cash' ? 'pending' : 'paid',
         ]);
 
-        return $this->successResponse($order->load('location', 'category'), 'تم تأكيد الطلب بنجاح');
+        return $this->successResponse($order->load('location', 'category'), __('messages.order.confirmed'));
     }
 }
 

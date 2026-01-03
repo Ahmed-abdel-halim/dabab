@@ -92,7 +92,9 @@ POST /v1/complete-location
 {
     "lat": 24.7136,
     "lng": 46.6753,
-    "address": "شارع الأميرة نورة بنت عبد الرحمن بن فيصل"
+    "address": "شارع الأميرة نورة بنت عبد الرحمن بن فيصل",
+    "type": "home", // home, work, friend, other (اختياري)
+    "is_default": true // (اختياري)
 }
 ```
 
@@ -167,7 +169,7 @@ POST /v1/orders
     "details": "2 قارورة , زجاجة زيت , صدور دجاج 20 قطعة",
     "delivery_cost": 5,
     "scheduled_at": null, // أو "2025-12-15 14:00:00"
-    "address_id": 1,
+    "location_id": 1, // ID من جدول user_locations
     "payment_method": "cash" // cash, apple_pay, bank_card
 }
 ```
@@ -305,7 +307,7 @@ POST /v1/car-washes
     "scheduled_date": "2025-12-13",
     "scheduled_time": "11:00",
     "time_period": "before_lunch", // before_lunch, early_evening, dinner_time, late_night
-    "address_id": 1
+    "location_id": 1 // ID من جدول user_locations
 }
 ```
 
@@ -390,4 +392,6 @@ POST /v1/ratings
 - جميع التواريخ والأوقات بصيغة ISO 8601
 - جميع الأرقام العشرية بصيغة `decimal:2`
 - OTP الافتراضي للاختبار: `1234`
+- **ملاحظة مهمة:** تم دمج جدول `addresses` مع `user_locations`، لذلك جميع العناوين تُخزن في جدول `user_locations` مع إضافة حقول `type` و `is_default`
+- عند استخدام `location_id` في الطلبات أو مواعيد الغسيل، يجب استخدام ID من جدول `user_locations`
 

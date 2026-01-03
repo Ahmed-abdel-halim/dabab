@@ -52,7 +52,7 @@ class DeliveryController extends Controller
             'status' => 'pending',
         ]);
 
-        return $this->successResponse($delivery, 'تم إنشاء طلب التوصيل بنجاح');
+        return $this->successResponse($delivery, __('messages.delivery.created'));
     }
 
     public function getMyDeliveries(Request $request)
@@ -68,7 +68,7 @@ class DeliveryController extends Controller
 
         $deliveries = $query->latest()->get();
 
-        return $this->successResponse($deliveries, 'تم جلب طلبات التوصيل');
+        return $this->successResponse($deliveries, __('messages.delivery.deliveries_loaded'));
     }
 
     public function getDelivery(Request $request, $id)
@@ -77,7 +77,7 @@ class DeliveryController extends Controller
             ->with('rating')
             ->findOrFail($id);
 
-        return $this->successResponse($delivery, 'تم جلب طلب التوصيل');
+        return $this->successResponse($delivery, __('messages.delivery.loaded'));
     }
 
     public function updateDelivery(Request $request, $id)
@@ -117,7 +117,7 @@ class DeliveryController extends Controller
 
         $delivery->update($updateData);
 
-        return $this->successResponse($delivery, 'تم تحديث طلب التوصيل');
+        return $this->successResponse($delivery, __('messages.delivery.updated'));
     }
 
     public function cancelDelivery(Request $request, $id)
@@ -128,7 +128,7 @@ class DeliveryController extends Controller
 
         $delivery->update(['status' => 'cancelled']);
 
-        return $this->successResponse($delivery, 'تم إلغاء طلب التوصيل');
+        return $this->successResponse($delivery, __('messages.delivery.cancelled'));
     }
 
     public function trackDelivery(Request $request, $id)
@@ -143,7 +143,7 @@ class DeliveryController extends Controller
             'last_update' => $delivery->updated_at->format('Y-m-d H:i'),
         ];
 
-        return $this->successResponse($tracking, 'معلومات تتبع التوصيل');
+        return $this->successResponse($tracking, __('messages.delivery.tracking_info'));
     }
 
     private function calculateDeliveryCost($lat1, $lng1, $lat2, $lng2)
@@ -168,9 +168,9 @@ class DeliveryController extends Controller
     private function getEstimatedTime($delivery)
     {
         if ($delivery->status === 'pending') {
-            return '30 - 45 دقيقة';
+            return __('messages.delivery.estimated_time_pending');
         } elseif ($delivery->status === 'in_progress') {
-            return '15 - 30 دقيقة';
+            return __('messages.delivery.estimated_time_in_progress');
         }
         return null;
     }

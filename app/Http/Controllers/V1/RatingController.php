@@ -23,7 +23,7 @@ class RatingController extends Controller
         ]);
 
         if (!$request->order_id && !$request->delivery_id) {
-            return $this->errorResponse('يجب تحديد طلب أو توصيل', 422);
+            return $this->errorResponse(__('messages.rating.order_or_delivery_required'), 422);
         }
 
         if ($request->order_id) {
@@ -32,7 +32,7 @@ class RatingController extends Controller
                 ->findOrFail($request->order_id);
 
             if ($order->rating) {
-                return $this->errorResponse('تم التقييم مسبقاً', 422);
+                return $this->errorResponse(__('messages.rating.already_rated'), 422);
             }
         }
 
@@ -42,7 +42,7 @@ class RatingController extends Controller
                 ->findOrFail($request->delivery_id);
 
             if ($delivery->rating) {
-                return $this->errorResponse('تم التقييم مسبقاً', 422);
+                return $this->errorResponse(__('messages.rating.already_rated'), 422);
             }
         }
 
@@ -54,7 +54,7 @@ class RatingController extends Controller
             'comment' => $request->comment,
         ]);
 
-        return $this->successResponse($rating->load('order', 'delivery'), 'تم إضافة التقييم بنجاح');
+        return $this->successResponse($rating->load('order', 'delivery'), __('messages.rating.created'));
     }
 
     public function getMyRatings(Request $request)
@@ -64,7 +64,7 @@ class RatingController extends Controller
             ->latest()
             ->get();
 
-        return $this->successResponse($ratings, 'تم جلب التقييمات');
+        return $this->successResponse($ratings, __('messages.rating.ratings_loaded'));
     }
 }
 

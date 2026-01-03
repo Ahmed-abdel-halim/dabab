@@ -39,7 +39,7 @@ class RentalController extends Controller
             'status' => 'pending',
         ]);
 
-        return $this->successResponse($rental, 'تم تقديم طلب الاستئجار بنجاح');
+        return $this->successResponse($rental, __('messages.rental.created'));
     }
 
     public function getMyRentals(Request $request)
@@ -48,7 +48,7 @@ class RentalController extends Controller
             ->latest()
             ->get();
 
-        return $this->successResponse($rentals, 'تم جلب طلبات الاستئجار');
+        return $this->successResponse($rentals, __('messages.rental.rentals_loaded'));
     }
 
     public function getRental(Request $request, $id)
@@ -56,7 +56,7 @@ class RentalController extends Controller
         $rental = Rental::where('user_id', $request->user()->id)
             ->findOrFail($id);
 
-        return $this->successResponse($rental, 'تم جلب طلب الاستئجار');
+        return $this->successResponse($rental, __('messages.rental.loaded'));
     }
 
     public function updateRental(Request $request, $id)
@@ -86,7 +86,7 @@ class RentalController extends Controller
             'personal_name', 'commercial_name', 'store_type', 'rental_type', 'additional_details'
         ]));
 
-        return $this->successResponse($rental, 'تم تحديث طلب الاستئجار');
+        return $this->successResponse($rental, __('messages.rental.updated'));
     }
 }
 

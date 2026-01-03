@@ -36,7 +36,7 @@ class AddressController extends Controller
             'is_default' => $request->is_default ?? false,
         ]);
 
-        return $this->successResponse($location, 'تم إضافة العنوان بنجاح');
+        return $this->successResponse($location, __('messages.address.created'));
     }
 
     public function getMyAddresses(Request $request)
@@ -45,7 +45,7 @@ class AddressController extends Controller
             ->latest()
             ->get();
 
-        return $this->successResponse($locations, 'تم جلب العناوين');
+        return $this->successResponse($locations, __('messages.address.addresses_loaded'));
     }
 
     public function getAddress(Request $request, $id)
@@ -53,7 +53,7 @@ class AddressController extends Controller
         $location = UserLocation::where('user_id', $request->user()->id)
             ->findOrFail($id);
 
-        return $this->successResponse($location, 'تم جلب العنوان');
+        return $this->successResponse($location, __('messages.address.loaded'));
     }
 
     public function updateAddress(Request $request, $id)
@@ -79,7 +79,7 @@ class AddressController extends Controller
             'type', 'address', 'lat', 'lng', 'is_default'
         ]));
 
-        return $this->successResponse($location, 'تم تحديث العنوان');
+        return $this->successResponse($location, __('messages.address.updated'));
     }
 
     public function deleteAddress(Request $request, $id)
@@ -89,7 +89,7 @@ class AddressController extends Controller
 
         $location->delete();
 
-        return $this->successResponse(null, 'تم حذف العنوان');
+        return $this->successResponse(null, __('messages.address.deleted'));
     }
 }
 

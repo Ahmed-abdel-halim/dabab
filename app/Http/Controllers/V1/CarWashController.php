@@ -36,7 +36,7 @@ class CarWashController extends Controller
             'status' => 'pending',
         ]);
 
-        return $this->successResponse($carWash->load('location'), 'تم حجز موعد الغسيل بنجاح');
+        return $this->successResponse($carWash->load('location'), __('messages.car_wash.created'));
     }
 
     public function getMyCarWashes(Request $request)
@@ -52,7 +52,7 @@ class CarWashController extends Controller
 
         $carWashes = $query->latest()->get();
 
-        return $this->successResponse($carWashes, 'تم جلب مواعيد الغسيل');
+        return $this->successResponse($carWashes, __('messages.car_wash.appointments_loaded'));
     }
 
     public function getCarWash(Request $request, $id)
@@ -61,7 +61,7 @@ class CarWashController extends Controller
             ->with('address')
             ->findOrFail($id);
 
-        return $this->successResponse($carWash, 'تم جلب موعد الغسيل');
+        return $this->successResponse($carWash, __('messages.car_wash.loaded'));
     }
 
     public function updateCarWash(Request $request, $id)
@@ -92,7 +92,7 @@ class CarWashController extends Controller
 
         $carWash->update($updateData);
 
-        return $this->successResponse($carWash->load('address'), 'تم تحديث موعد الغسيل');
+        return $this->successResponse($carWash->load('address'), __('messages.car_wash.updated'));
     }
 
     public function cancelCarWash(Request $request, $id)
@@ -103,7 +103,7 @@ class CarWashController extends Controller
 
         $carWash->update(['status' => 'cancelled']);
 
-        return $this->successResponse($carWash, 'تم إلغاء موعد الغسيل');
+        return $this->successResponse($carWash, __('messages.car_wash.cancelled'));
     }
 
     private function calculateCost($carSize, $washType)

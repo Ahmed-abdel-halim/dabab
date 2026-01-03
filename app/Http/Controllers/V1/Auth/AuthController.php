@@ -29,11 +29,11 @@ class AuthController extends Controller
         $user = User::where('phone', $phone)->first();
 
         if ($type === 'login' && !$user) {
-            return $this->errorResponse('رقم الهاتف غير مسجل', 404);
+            return $this->errorResponse(__('messages.auth.phone_not_registered'), 404);
         }
 
         if ($type === 'registration' && $user) {
-            return $this->errorResponse('رقم الهاتف مسجل بالفعل', 422);
+            return $this->errorResponse(__('messages.auth.phone_already_registered'), 422);
         }
 
         Cache::put(
@@ -45,7 +45,7 @@ class AuthController extends Controller
         return $this->successResponse([
             'otp' => self::STATIC_OTP,
             'expires_in' => 10
-        ], 'تم إرسال كود التحقق');
+        ], __('messages.auth.verification_code_sent'));
     }
 
     public function verifyRegistrationCode(Request $request)
@@ -58,11 +58,11 @@ class AuthController extends Controller
         $cachedOtp = Cache::get('otp_' . $request->phone . '_registration');
 
         if (!$cachedOtp || $cachedOtp !== $request->code) {
-            return $this->errorResponse('كود التحقق غير صحيح أو منتهي', 422);
+            return $this->errorResponse(__('messages.auth.verification_code_invalid'), 422);
         }
 
         if (User::where('phone', $request->phone)->exists()) {
-            return $this->errorResponse('رقم الهاتف مسجل بالفعل', 422);
+            return $this->errorResponse(__('messages.auth.phone_already_registered'), 422);
         }
 
         $tempToken = bin2hex(random_bytes(32));
@@ -81,7 +81,7 @@ class AuthController extends Controller
         return $this->successResponse([
             'temp_token' => $tempToken,
             'next_step'  => 'complete_registration'
-        ], 'تم التحقق بنجاح');
+        ], __('messages.auth.verification_success'));
     }
 
     public function completeRegistration(Request $request)
@@ -95,16 +95,16 @@ class AuthController extends Controller
         $data = Cache::get('registration_' . $request->temp_token);
 
         if (!$data) {
-            return $this->errorResponse('رمز التسجيل غير صالح', 422);
+            return $this->errorResponse(__('messages.auth.registration_token_invalid'), 422);
         }
 
         if (User::where('phone', $data['phone'])->exists()) {
             Cache::forget('registration_' . $request->temp_token);
-            return $this->errorResponse('رقم الهاتف مسجل بالفعل', 422);
+            return $this->errorResponse(__('messages.auth.phone_already_registered'), 422);
         }
 
         $user = User::create([
-            'name'              => $request->name ?? 'مستخدم ' . substr($data['phone'], -4),
+            'name'              => $request->name ?? __('messages.auth.default_user_name') . ' ' . substr($data['phone'], -4),
             'email'             => $request->email ?? $data['phone'] . '@user.local',
             'phone'             => $data['phone'],
             'phone_verified_at' => $data['verified_at'],
@@ -118,7 +118,7 @@ class AuthController extends Controller
         return $this->successResponse([
             'user'  => $user,
             'token' => $token
-        ], 'تم التسجيل بنجاح');
+        ], __('messages.auth.registration_success'));
     }
 
     public function login(Request $request)
@@ -131,13 +131,13 @@ class AuthController extends Controller
         $cachedOtp = Cache::get('otp_' . $request->phone . '_login');
 
         if (!$cachedOtp || $cachedOtp !== $request->code) {
-            return $this->errorResponse('كود التحقق غير صحيح أو منتهي', 422);
+            return $this->errorResponse(__('messages.auth.verification_code_invalid'), 422);
         }
 
         $user = User::where('phone', $request->phone)->first();
 
         if (!$user) {
-            return $this->errorResponse('رقم الهاتف غير مسجل', 404);
+            return $this->errorResponse(__('messages.auth.phone_not_registered'), 404);
         }
 
         Cache::forget('otp_' . $request->phone . '_login');
@@ -149,21 +149,21 @@ class AuthController extends Controller
         return $this->successResponse([
             'user'  => $user,
             'token' => $token
-        ], 'تم تسجيل الدخول');
+        ], __('messages.auth.login_success'));
     }
 
     public function logout(Request $request)
     {
         $request->user()->currentAccessToken()->delete();
 
-        return $this->successResponse(null, 'تم تسجيل الخروج');
+        return $this->successResponse(null, __('messages.auth.logout_success'));
     }
 
     public function profile(Request $request)
     {
         return $this->successResponse(
             $request->user()->load('location'),
-            'تم تحميل الملف الشخصي'
+            __('messages.auth.profile_loaded')
         );
     }
 
@@ -197,14 +197,14 @@ class AuthController extends Controller
             ]
         );
 
-        return $this->successResponse($location, 'تم تحديث الموقع');
+        return $this->successResponse($location, __('messages.auth.location_updated'));
     }
 
     public function getLocation(Request $request)
     {
         return $this->successResponse(
             $request->user()->location,
-            'تم جلب الموقع'
+            __('messages.auth.location_loaded')
         );
     }
 }
