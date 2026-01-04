@@ -86,6 +86,28 @@ trait HasLocalizedAttributes
     }
 
     /**
+     * Get an attribute from the model.
+     * Override to handle localized attributes
+     */
+    public function getAttribute($key)
+    {
+        // Setup localized attributes if not already done
+        if (!isset($this->localizedAttributesSetup)) {
+            $this->setupLocalizedAttributes();
+            $this->localizedAttributesSetup = true;
+        }
+
+        $localizedFields = $this->getLocalizedAttributes();
+        
+        // If this is a localized field, return the localized value
+        if (in_array($key, $localizedFields)) {
+            return $this->getLocalizedValue($key);
+        }
+
+        return parent::getAttribute($key);
+    }
+
+    /**
      * Handle dynamic accessor calls (e.g., getNameAttribute)
      */
     public function __call($method, $parameters)
@@ -101,20 +123,6 @@ trait HasLocalizedAttributes
         }
 
         return parent::__call($method, $parameters);
-    }
-
-    /**
-     * Magic method to handle dynamic accessors for localized fields
-     */
-    public function __get($key)
-    {
-        $localizedFields = $this->getLocalizedAttributes();
-        
-        if (in_array($key, $localizedFields)) {
-            return $this->getLocalizedValue($key);
-        }
-
-        return parent::__get($key);
     }
 }
 
