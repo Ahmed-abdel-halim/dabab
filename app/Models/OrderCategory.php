@@ -2,10 +2,13 @@
 
 namespace App\Models;
 
+use App\Traits\HasLocalizedAttributes;
 use Illuminate\Database\Eloquent\Model;
 
 class OrderCategory extends Model
 {
+    use HasLocalizedAttributes;
+
     protected $fillable = [
         'name_ar',
         'name_en',

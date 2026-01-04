@@ -40,7 +40,7 @@ class OrderController extends Controller
             'user_id' => $request->user()->id,
             'order_number' => 'ORD-' . strtoupper(Str::random(10)),
             'category_id' => $request->category_id,
-            'category_name' => $category ? $category->name_ar : $request->category_name,
+            'category_name' => $category ? $category->name : $request->category_name,
             'details' => $request->details,
             'delivery_cost' => $request->delivery_cost ?? ($category ? $category->fixed_price : 5),
             'total_cost' => $request->delivery_cost ?? ($category ? $category->fixed_price : 5),
