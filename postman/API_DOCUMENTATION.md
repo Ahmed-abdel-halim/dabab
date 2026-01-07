@@ -165,12 +165,41 @@ POST /v1/orders
 **Body:**
 ```json
 {
-    "category_id": 1,
-    "details": "2 قارورة , زجاجة زيت , صدور دجاج 20 قطعة",
-    "delivery_cost": 5,
-    "scheduled_at": null, // أو "2025-12-15 14:00:00"
-    "location_id": 1, // ID من جدول user_locations
-    "payment_method": "cash" // cash, apple_pay, bank_card
+    "location_id": 1,
+    "scheduled_at": "2025-12-15 14:00:00",
+    "payment_method": "cash",
+    "items": [
+        {
+            "category_id": 1,
+            "details": "2 قارورة , زجاجة زيت"
+        },
+        {
+            "category_id": 2,
+            "details": "صدور دجاج 20 قطعة"
+        }
+    ]
+}
+```
+**ملاحظات:**
+- `items` **إلزامي** ويجب أن يحتوي على طلب واحد على الأقل
+- يمكنك إنشاء طلب واحد بإرسال `items` يحتوي على item واحد فقط
+- يمكنك إنشاء طلب يحتوي على عدة طلبات فرعية من أماكن مختلفة
+- كل طلب فرعي له فئة خاصة به وتفاصيله
+- `delivery_cost` **يُحسب تلقائياً** من `fixed_price` للفئة المحددة في `category_id`
+- التكلفة الإجمالية تُحسب تلقائياً من مجموع تكاليف الطلبات الفرعية
+
+**مثال لطلب واحد:**
+```json
+{
+    "location_id": 1,
+    "scheduled_at": null,
+    "payment_method": "cash",
+    "items": [
+        {
+            "category_id": 1,
+            "details": "2 قارورة , زجاجة زيت , صدور دجاج 20 قطعة"
+        }
+    ]
 }
 ```
 
@@ -205,6 +234,42 @@ POST /v1/orders/{id}/confirm
     "payment_method": "cash"
 }
 ```
+
+### إضافة طلب فرعي لطلب موجود
+```
+POST /v1/orders/{id}/items
+```
+**Body:**
+```json
+{
+    "category_id": 3,
+    "details": "طلب جديد من مكان آخر"
+}
+```
+**ملاحظات:**
+- يمكن إضافة طلبات فرعية فقط للطلبات في حالة `pending`
+- `delivery_cost` يُحسب تلقائياً من `fixed_price` للفئة المحددة
+
+### تحديث طلب فرعي
+```
+PUT /v1/orders/{orderId}/items/{itemId}
+```
+**Body:**
+```json
+{
+    "category_id": 3,
+    "details": "تفاصيل محدثة"
+}
+```
+**ملاحظات:**
+- يمكن تحديث الطلبات الفرعية فقط للطلبات في حالة `pending`
+- إذا تم تغيير `category_id`، سيتم إعادة حساب `delivery_cost` تلقائياً من `fixed_price` للفئة الجديدة
+
+### حذف طلب فرعي
+```
+DELETE /v1/orders/{orderId}/items/{itemId}
+```
+**ملاحظة:** يمكن حذف الطلبات الفرعية فقط للطلبات في حالة `pending`. عند الحذف، يتم تحديث التكلفة الإجمالية للطلب تلقائياً.
 
 ---
 

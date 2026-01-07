@@ -565,7 +565,7 @@
 						],
 						"body": {
 							"mode": "raw",
-							"raw": "{\n    \"category_id\": 1,\n    \"details\": \"2 قارورة , زجاجة زيت , صدور دجاج 20 قطعة\",\n    \"delivery_cost\": 5,\n    \"scheduled_at\": null,\n    \"location_id\": 1,\n    \"payment_method\": \"cash\"\n}"
+							"raw": "{\n    \"location_id\": 1,\n    \"scheduled_at\": \"2025-12-15 14:00:00\",\n    \"payment_method\": \"cash\",\n    \"items\": [\n        {\n            \"category_id\": 1,\n            \"details\": \"2 قارورة , زجاجة زيت\"\n        },\n        {\n            \"category_id\": 2,\n            \"details\": \"صدور دجاج 20 قطعة\"\n        }\n    ]\n}"
 						},
 						"url": {
 							"raw": "{{base_url}}/v1/orders?lang={{lang}}",
@@ -767,6 +767,137 @@
 							"variable": [
 								{
 									"key": "id",
+									"value": "1"
+								}
+							]
+						}
+					}
+				},
+				{
+					"name": "Add Order Item - إضافة طلب فرعي",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Accept",
+								"value": "application/json",
+								"type": "text"
+							},
+							{
+								"key": "Content-Type",
+								"value": "application/json",
+								"type": "text"
+							},
+							{
+								"key": "Authorization",
+								"value": "Bearer {{token}}",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"category_id\": 3,\n    \"details\": \"طلب جديد من مكان آخر\"\n}"
+						},
+						"url": {
+							"raw": "{{base_url}}/v1/orders/:id/items?lang={{lang}}",
+							"host": ["{{base_url}}"],
+							"path": ["v1", "orders", ":id", "items"],
+							"query": [
+								{
+									"key": "lang",
+									"value": "{{lang}}"
+								}
+							],
+							"variable": [
+								{
+									"key": "id",
+									"value": "1"
+								}
+							]
+						}
+					}
+				},
+				{
+					"name": "Update Order Item - تحديث طلب فرعي",
+					"request": {
+						"method": "PUT",
+						"header": [
+							{
+								"key": "Accept",
+								"value": "application/json",
+								"type": "text"
+							},
+							{
+								"key": "Content-Type",
+								"value": "application/json",
+								"type": "text"
+							},
+							{
+								"key": "Authorization",
+								"value": "Bearer {{token}}",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"category_id\": 3,\n    \"details\": \"تفاصيل محدثة\"\n}"
+						},
+						"url": {
+							"raw": "{{base_url}}/v1/orders/:orderId/items/:itemId?lang={{lang}}",
+							"host": ["{{base_url}}"],
+							"path": ["v1", "orders", ":orderId", "items", ":itemId"],
+							"query": [
+								{
+									"key": "lang",
+									"value": "{{lang}}"
+								}
+							],
+							"variable": [
+								{
+									"key": "orderId",
+									"value": "1"
+								},
+								{
+									"key": "itemId",
+									"value": "1"
+								}
+							]
+						}
+					}
+				},
+				{
+					"name": "Delete Order Item - حذف طلب فرعي",
+					"request": {
+						"method": "DELETE",
+						"header": [
+							{
+								"key": "Accept",
+								"value": "application/json",
+								"type": "text"
+							},
+							{
+								"key": "Authorization",
+								"value": "Bearer {{token}}",
+								"type": "text"
+							}
+						],
+						"url": {
+							"raw": "{{base_url}}/v1/orders/:orderId/items/:itemId?lang={{lang}}",
+							"host": ["{{base_url}}"],
+							"path": ["v1", "orders", ":orderId", "items", ":itemId"],
+							"query": [
+								{
+									"key": "lang",
+									"value": "{{lang}}"
+								}
+							],
+							"variable": [
+								{
+									"key": "orderId",
+									"value": "1"
+								},
+								{
+									"key": "itemId",
 									"value": "1"
 								}
 							]

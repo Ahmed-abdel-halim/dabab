@@ -46,5 +46,10 @@ class Order extends Model
     {
         return $this->hasOne(Rating::class);
     }
+
+    public function items()
+    {
+        return $this->hasMany(OrderItem::class)->orderBy('order_index');
+    }
 }
 

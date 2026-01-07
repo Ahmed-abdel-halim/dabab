@@ -43,6 +43,10 @@ Route::middleware('auth:sanctum')->group(function () {
         Route::post('/{id}/cancel', [OrderController::class, 'cancelOrder']);
         Route::get('/{id}/track', [OrderController::class, 'trackOrder']);
         Route::post('/{id}/confirm', [OrderController::class, 'confirmOrder']);
+        // Routes for order items (sub-orders)
+        Route::post('/{id}/items', [OrderController::class, 'addOrderItem']);
+        Route::put('/{orderId}/items/{itemId}', [OrderController::class, 'updateOrderItem']);
+        Route::delete('/{orderId}/items/{itemId}', [OrderController::class, 'deleteOrderItem']);
     });
 
     // Rental Routes
