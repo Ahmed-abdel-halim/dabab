@@ -20,6 +20,7 @@ return [
     'order.categories_loaded' => 'Categories loaded successfully',
     'order.created' => 'Order created successfully',
     'order.updated' => 'Order updated successfully',
+    'order.deleted' => 'Order deleted successfully',
     'order.cancelled' => 'Order cancelled successfully',
     'order.loaded' => 'Order loaded successfully',
     'order.orders_loaded' => 'Orders loaded successfully',
@@ -40,6 +41,8 @@ return [
     // Rental Messages
     'rental.created' => 'Rental request submitted successfully',
     'rental.updated' => 'Rental request updated successfully',
+    'rental.cancelled' => 'Rental request cancelled successfully',
+    'rental.deleted' => 'Rental request deleted successfully',
     'rental.loaded' => 'Rental request loaded successfully',
     'rental.rentals_loaded' => 'Rental requests loaded successfully',
     'rental.file_upload_failed' => 'File upload failed',
@@ -49,6 +52,7 @@ return [
     // Delivery Messages
     'delivery.created' => 'Delivery request created successfully',
     'delivery.updated' => 'Delivery request updated successfully',
+    'delivery.deleted' => 'Delivery request deleted successfully',
     'delivery.cancelled' => 'Delivery request cancelled successfully',
     'delivery.loaded' => 'Delivery request loaded successfully',
     'delivery.deliveries_loaded' => 'Delivery requests loaded successfully',
@@ -59,6 +63,7 @@ return [
     // Car Wash Messages
     'car_wash.created' => 'Car wash appointment booked successfully',
     'car_wash.updated' => 'Car wash appointment updated successfully',
+    'car_wash.deleted' => 'Car wash appointment deleted successfully',
     'car_wash.cancelled' => 'Car wash appointment cancelled successfully',
     'car_wash.loaded' => 'Car wash appointment loaded successfully',
     'car_wash.appointments_loaded' => 'Car wash appointments loaded successfully',
@@ -78,4 +83,5 @@ return [
     'common.unauthorized' => 'Unauthorized',
     'common.validation_error' => 'Validation error',
     'common.server_error' => 'Server error',
+    'invalid_service_type' => 'Invalid service type',
 ];

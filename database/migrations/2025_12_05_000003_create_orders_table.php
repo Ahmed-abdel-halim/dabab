@@ -12,8 +12,6 @@ return new class extends Migration
             $table->id();
             $table->foreignId('user_id')->constrained()->onDelete('cascade');
             $table->string('order_number')->unique();
-            $table->foreignId('category_id')->nullable()->constrained('order_categories')->onDelete('set null');
-            $table->text('details');
             $table->decimal('delivery_cost', 10, 2)->default(0);
             $table->decimal('total_cost', 10, 2)->default(0);
             $table->enum('status', ['pending', 'confirmed', 'in_progress', 'completed', 'cancelled'])->default('pending');

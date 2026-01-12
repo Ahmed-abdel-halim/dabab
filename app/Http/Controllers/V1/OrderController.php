@@ -79,7 +79,7 @@ class OrderController extends Controller
         $status = $request->query('status', 'all'); // all, pending, confirmed, in_progress, completed, cancelled
 
         $query = Order::where('user_id', $request->user()->id)
-            ->with('location', 'category', 'rating', 'items.category');
+            ->with('location', 'rating', 'items.category');
 
         if ($status !== 'all') {
             $query->where('status', $status);
@@ -93,37 +93,10 @@ class OrderController extends Controller
     public function getOrder(Request $request, $id)
     {
         $order = Order::where('user_id', $request->user()->id)
-            ->with('location', 'category', 'rating', 'items.category')
+            ->with('location', 'rating', 'items.category')
             ->findOrFail($id);
 
         return $this->successResponse($order, __('messages.order.loaded'));
-    }
-
-    public function updateOrder(Request $request, $id)
-    {
-        $order = Order::where('user_id', $request->user()->id)
-            ->where('status', 'pending')
-            ->findOrFail($id);
-
-        $request->validate([
-            'category_id' => 'nullable|exists:order_categories,id',
-            'details' => 'nullable|string',
-            'delivery_cost' => 'nullable|numeric|min:0',
-            'scheduled_at' => 'nullable|date',
-            'location_id' => 'nullable|exists:user_locations,id',
-            'payment_method' => 'nullable|in:cash,apple_pay,bank_card',
-        ]);
-
-        $order->update($request->only([
-            'category_id', 'details', 'delivery_cost', 'scheduled_at', 'location_id', 'payment_method'
-        ]));
-
-        if ($request->has('delivery_cost')) {
-            $order->total_cost = $request->delivery_cost;
-            $order->save();
-        }
-
-        return $this->successResponse($order->load('location', 'category'), __('messages.order.updated'));
     }
 
     public function cancelOrder(Request $request, $id)
@@ -181,7 +154,7 @@ class OrderController extends Controller
             'payment_status' => $request->payment_method === 'cash' ? 'pending' : 'paid',
         ]);
 
-        return $this->successResponse($order->load('location', 'category', 'items.category'), __('messages.order.confirmed'));
+        return $this->successResponse($order->load('location', 'items.category'), __('messages.order.confirmed'));
     }
 
     /**

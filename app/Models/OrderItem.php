@@ -18,6 +18,10 @@ class OrderItem extends Model
         'delivery_cost' => 'decimal:2',
     ];
 
+    protected $hidden = [
+        'category_name',
+    ];
+
     public function order()
     {
         return $this->belongsTo(Order::class);

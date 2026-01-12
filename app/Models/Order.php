@@ -24,6 +24,12 @@ class Order extends Model
         'total_cost' => 'decimal:2',
     ];
 
+    protected $hidden = [
+        'category_id',
+        'category_name',
+        'details',
+    ];
+
     public function user()
     {
         return $this->belongsTo(User::class);

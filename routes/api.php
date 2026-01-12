@@ -40,7 +40,6 @@ Route::middleware('auth:sanctum')->group(function () {
         Route::get('/', [OrderController::class, 'getMyOrders']);
         Route::post('/', [OrderController::class, 'createOrder']);
         Route::get('/{id}', [OrderController::class, 'getOrder']);
-        Route::put('/{id}', [OrderController::class, 'updateOrder']);
         Route::post('/{id}/cancel', [OrderController::class, 'cancelOrder']);
         Route::get('/{id}/track', [OrderController::class, 'trackOrder']);
         Route::post('/{id}/confirm', [OrderController::class, 'confirmOrder']);
@@ -55,7 +54,6 @@ Route::middleware('auth:sanctum')->group(function () {
         Route::get('/', [RentalController::class, 'getMyRentals']);
         Route::post('/', [RentalController::class, 'createRental']);
         Route::get('/{id}', [RentalController::class, 'getRental']);
-        Route::put('/{id}', [RentalController::class, 'updateRental']);
     });
 
     // Delivery Routes
@@ -63,7 +61,6 @@ Route::middleware('auth:sanctum')->group(function () {
         Route::get('/', [DeliveryController::class, 'getMyDeliveries']);
         Route::post('/', [DeliveryController::class, 'createDelivery']);
         Route::get('/{id}', [DeliveryController::class, 'getDelivery']);
-        Route::put('/{id}', [DeliveryController::class, 'updateDelivery']);
         Route::post('/{id}/cancel', [DeliveryController::class, 'cancelDelivery']);
         Route::get('/{id}/track', [DeliveryController::class, 'trackDelivery']);
     });
@@ -75,7 +72,6 @@ Route::middleware('auth:sanctum')->group(function () {
         Route::get('/', [CarWashController::class, 'getMyCarWashes']);
         Route::post('/', [CarWashController::class, 'createCarWash']);
         Route::get('/{id}', [CarWashController::class, 'getCarWash']);
-        Route::put('/{id}', [CarWashController::class, 'updateCarWash']);
         Route::post('/{id}/cancel', [CarWashController::class, 'cancelCarWash']);
     });
 
@@ -87,4 +83,6 @@ Route::middleware('auth:sanctum')->group(function () {
 
     // All Orders Route (جميع الطلبات من كل الخدمات)
     Route::get('v1/all-orders', [AllOrdersController::class, 'getAllOrders']);
+    Route::put('v1/all-orders/{type}/{id}', [AllOrdersController::class, 'updateService']);
+    Route::delete('v1/all-orders/{type}/{id}', [AllOrdersController::class, 'deleteService']);
 });

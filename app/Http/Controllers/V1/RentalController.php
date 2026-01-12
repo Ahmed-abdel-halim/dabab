@@ -72,49 +72,5 @@ class RentalController extends Controller
         return $this->successResponse($rental, __('messages.rental.loaded'));
     }
 
-    public function updateRental(Request $request, $id)
-    {
-        $rental = Rental::where('user_id', $request->user()->id)
-            ->where('status', 'pending')
-            ->findOrFail($id);
-
-        $request->validate([
-            'personal_name' => 'nullable|string|max:255',
-            'commercial_name' => 'nullable|string|max:255',
-            'store_type' => 'nullable|string|max:255',
-            'rental_type' => 'nullable|in:scooter_only,scooter_with_driver',
-            'commercial_registration_file' => 'nullable|file|mimes:pdf,jpg,jpeg,png|max:5120',
-            'additional_details' => 'nullable|string',
-        ]);
-
-        try {
-            $updateData = $request->only([
-                'personal_name', 'commercial_name', 'store_type', 'rental_type', 'additional_details'
-            ]);
-
-            if ($request->hasFile('commercial_registration_file')) {
-                // حذف الملف القديم إذا كان موجوداً
-                $oldFilePath = $rental->attributes['commercial_registration_file'] ?? null;
-                if ($oldFilePath) {
-                    Storage::disk('public')->delete($oldFilePath);
-                }
-                
-                $file = $request->file('commercial_registration_file');
-                $filePath = $file->store('rentals', 'public');
-                
-                if (!$filePath) {
-                    return $this->errorResponse(__('messages.rental.file_upload_failed'), 500);
-                }
-                
-                $updateData['commercial_registration_file'] = $filePath;
-            }
-
-            $rental->update($updateData);
-
-            return $this->successResponse($rental, __('messages.rental.updated'));
-        } catch (\Exception $e) {
-            return $this->errorResponse(__('messages.rental.update_error') . ': ' . $e->getMessage(), 500);
-        }
-    }
 }
 

@@ -616,50 +616,6 @@
 					}
 				},
 				{
-					"name": "Update Order - تحديث طلب",
-					"request": {
-						"method": "PUT",
-						"header": [
-							{
-								"key": "Accept",
-								"value": "application/json",
-								"type": "text"
-							},
-							{
-								"key": "Content-Type",
-								"value": "application/json",
-								"type": "text"
-							},
-							{
-								"key": "Authorization",
-								"value": "Bearer {{token}}",
-								"type": "text"
-							}
-						],
-						"body": {
-							"mode": "raw",
-							"raw": "{\n    \"details\": \"3 قارورة , زجاجة زيت\",\n    \"delivery_cost\": 7,\n    \"location_id\": 2\n}"
-						},
-						"url": {
-							"raw": "{{base_url}}/v1/orders/:id?lang={{lang}}",
-							"host": ["{{base_url}}"],
-							"path": ["v1", "orders", ":id"],
-							"query": [
-								{
-									"key": "lang",
-									"value": "{{lang}}"
-								}
-							],
-							"variable": [
-								{
-									"key": "id",
-									"value": "1"
-								}
-							]
-						}
-					}
-				},
-				{
 					"name": "Cancel Order - إلغاء طلب",
 					"request": {
 						"method": "POST",
@@ -903,40 +859,6 @@
 							]
 						}
 					}
-				},
-				{
-					"name": "Get All Orders - الحصول على جميع الطلبات",
-					"request": {
-						"method": "GET",
-						"header": [
-							{
-								"key": "Accept",
-								"value": "application/json",
-								"type": "text"
-							},
-							{
-								"key": "Authorization",
-								"value": "Bearer {{token}}",
-								"type": "text"
-							}
-						],
-						"url": {
-							"raw": "{{base_url}}/v1/all-orders?status=all&lang={{lang}}",
-							"host": ["{{base_url}}"],
-							"path": ["v1", "all-orders"],
-							"query": [
-								{
-									"key": "status",
-									"value": "all",
-									"description": "all, pending, completed, cancelled"
-								},
-								{
-									"key": "lang",
-									"value": "{{lang}}"
-								}
-							]
-						}
-					}
 				}
 			]
 		},
@@ -1071,71 +993,6 @@
 							]
 						}
 					}
-				},
-				{
-					"name": "Update Rental - تحديث طلب استئجار",
-					"request": {
-						"method": "PUT",
-						"header": [
-							{
-								"key": "Accept",
-								"value": "application/json",
-								"type": "text"
-							},
-							{
-								"key": "Authorization",
-								"value": "Bearer {{token}}",
-								"type": "text"
-							}
-						],
-						"body": {
-							"mode": "formdata",
-							"formdata": [
-								{
-									"key": "personal_name",
-									"value": "نادية أحمد",
-									"type": "text"
-								},
-								{
-									"key": "commercial_name",
-									"value": "صيدلية الامرية المحدثة",
-									"type": "text"
-								},
-								{
-									"key": "store_type",
-									"value": "صيدلية",
-									"type": "text"
-								},
-								{
-									"key": "rental_type",
-									"value": "scooter_with_driver",
-									"type": "text"
-								},
-								{
-									"key": "additional_details",
-									"value": "تفاصيل محدثة",
-									"type": "text"
-								}
-							]
-						},
-						"url": {
-							"raw": "{{base_url}}/v1/rentals/:id?lang={{lang}}",
-							"host": ["{{base_url}}"],
-							"path": ["v1", "rentals", ":id"],
-							"query": [
-								{
-									"key": "lang",
-									"value": "{{lang}}"
-								}
-							],
-							"variable": [
-								{
-									"key": "id",
-									"value": "1"
-								}
-							]
-						}
-					}
 				}
 			]
 		},
@@ -1230,50 +1087,6 @@
 								"type": "text"
 							}
 						],
-						"url": {
-							"raw": "{{base_url}}/v1/deliveries/:id?lang={{lang}}",
-							"host": ["{{base_url}}"],
-							"path": ["v1", "deliveries", ":id"],
-							"query": [
-								{
-									"key": "lang",
-									"value": "{{lang}}"
-								}
-							],
-							"variable": [
-								{
-									"key": "id",
-									"value": "1"
-								}
-							]
-						}
-					}
-				},
-				{
-					"name": "Update Delivery - تحديث طلب توصيل",
-					"request": {
-						"method": "PUT",
-						"header": [
-							{
-								"key": "Accept",
-								"value": "application/json",
-								"type": "text"
-							},
-							{
-								"key": "Content-Type",
-								"value": "application/json",
-								"type": "text"
-							},
-							{
-								"key": "Authorization",
-								"value": "Bearer {{token}}",
-								"type": "text"
-							}
-						],
-						"body": {
-							"mode": "raw",
-							"raw": "{\n    \"shipment_details\": \"صندوق محدث\",\n    \"recipient_phone\": \"966567891025\"\n}"
-						},
 						"url": {
 							"raw": "{{base_url}}/v1/deliveries/:id?lang={{lang}}",
 							"host": ["{{base_url}}"],
@@ -1534,50 +1347,6 @@
 					}
 				},
 				{
-					"name": "Update Car Wash - تحديث موعد غسيل",
-					"request": {
-						"method": "PUT",
-						"header": [
-							{
-								"key": "Accept",
-								"value": "application/json",
-								"type": "text"
-							},
-							{
-								"key": "Content-Type",
-								"value": "application/json",
-								"type": "text"
-							},
-							{
-								"key": "Authorization",
-								"value": "Bearer {{token}}",
-								"type": "text"
-							}
-						],
-						"body": {
-							"mode": "raw",
-							"raw": "{\n    \"scheduled_date\": \"2025-12-14\",\n    \"scheduled_time\": \"14:00\",\n    \"time_period\": \"early_evening\"\n}"
-						},
-						"url": {
-							"raw": "{{base_url}}/v1/car-washes/:id?lang={{lang}}",
-							"host": ["{{base_url}}"],
-							"path": ["v1", "car-washes", ":id"],
-							"query": [
-								{
-									"key": "lang",
-									"value": "{{lang}}"
-								}
-							],
-							"variable": [
-								{
-									"key": "id",
-									"value": "1"
-								}
-							]
-						}
-					}
-				},
-				{
 					"name": "Cancel Car Wash - إلغاء موعد غسيل",
 					"request": {
 						"method": "POST",
@@ -1679,6 +1448,134 @@
 								{
 									"key": "lang",
 									"value": "{{lang}}"
+								}
+							]
+						}
+					}
+				}
+			]
+		},
+		{
+			"name": "8. All Orders (جميع الطلبات الموحدة)",
+			"item": [
+				{
+					"name": "Get All Orders - الحصول على جميع الطلبات",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Accept",
+								"value": "application/json",
+								"type": "text"
+							},
+							{
+								"key": "Authorization",
+								"value": "Bearer {{token}}",
+								"type": "text"
+							}
+						],
+						"url": {
+							"raw": "{{base_url}}/v1/all-orders?status=all&lang={{lang}}",
+							"host": ["{{base_url}}"],
+							"path": ["v1", "all-orders"],
+							"query": [
+								{
+									"key": "status",
+									"value": "all",
+									"description": "all, pending, completed, cancelled"
+								},
+								{
+									"key": "lang",
+									"value": "{{lang}}"
+								}
+							]
+						}
+					}
+				},
+				{
+					"name": "Update Service - تعديل خدمة",
+					"request": {
+						"method": "PUT",
+						"header": [
+							{
+								"key": "Accept",
+								"value": "application/json",
+								"type": "text"
+							},
+							{
+								"key": "Content-Type",
+								"value": "application/json",
+								"type": "text"
+							},
+							{
+								"key": "Authorization",
+								"value": "Bearer {{token}}",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"items\": [\n        {\n            \"category_id\": 1,\n            \"details\": \"تحديث الطلب\"\n        }\n    ]\n}"
+						},
+						"url": {
+							"raw": "{{base_url}}/v1/all-orders/:type/:id?lang={{lang}}",
+							"host": ["{{base_url}}"],
+							"path": ["v1", "all-orders", ":type", ":id"],
+							"query": [
+								{
+									"key": "lang",
+									"value": "{{lang}}"
+								}
+							],
+							"variable": [
+								{
+									"key": "type",
+									"value": "order",
+									"description": "order, delivery, rental, car_wash"
+								},
+								{
+									"key": "id",
+									"value": "1"
+								}
+							]
+						}
+					}
+				},
+				{
+					"name": "Cancel Service - إلغاء خدمة",
+					"request": {
+						"method": "DELETE",
+						"header": [
+							{
+								"key": "Accept",
+								"value": "application/json",
+								"type": "text"
+							},
+							{
+								"key": "Authorization",
+								"value": "Bearer {{token}}",
+								"type": "text"
+							}
+						],
+						"url": {
+							"raw": "{{base_url}}/v1/all-orders/:type/:id?lang={{lang}}",
+							"host": ["{{base_url}}"],
+							"path": ["v1", "all-orders", ":type", ":id"],
+							"query": [
+								{
+									"key": "lang",
+									"value": "{{lang}}"
+								}
+							],
+							"variable": [
+								{
+									"key": "type",
+									"value": "order",
+									"description": "order, delivery, rental, car_wash"
+								},
+								{
+									"key": "id",
+									"value": "1"
 								}
 							]
 						}

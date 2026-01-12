@@ -20,6 +20,7 @@ return [
     'order.categories_loaded' => 'تم جلب الفئات',
     'order.created' => 'تم إنشاء الطلب بنجاح',
     'order.updated' => 'تم تحديث الطلب',
+    'order.deleted' => 'تم حذف الطلب',
     'order.cancelled' => 'تم إلغاء الطلب',
     'order.loaded' => 'تم جلب الطلب',
     'order.orders_loaded' => 'تم جلب الطلبات',
@@ -40,6 +41,8 @@ return [
     // Rental Messages
     'rental.created' => 'تم تقديم طلب الاستئجار بنجاح',
     'rental.updated' => 'تم تحديث طلب الاستئجار',
+    'rental.cancelled' => 'تم إلغاء طلب الاستئجار',
+    'rental.deleted' => 'تم حذف طلب الاستئجار',
     'rental.loaded' => 'تم جلب طلب الاستئجار',
     'rental.rentals_loaded' => 'تم جلب طلبات الاستئجار',
     'rental.file_upload_failed' => 'فشل في رفع الملف',
@@ -49,6 +52,7 @@ return [
     // Delivery Messages
     'delivery.created' => 'تم إنشاء طلب التوصيل بنجاح',
     'delivery.updated' => 'تم تحديث طلب التوصيل',
+    'delivery.deleted' => 'تم حذف طلب التوصيل',
     'delivery.cancelled' => 'تم إلغاء طلب التوصيل',
     'delivery.loaded' => 'تم جلب طلب التوصيل',
     'delivery.deliveries_loaded' => 'تم جلب طلبات التوصيل',
@@ -59,6 +63,7 @@ return [
     // Car Wash Messages
     'car_wash.created' => 'تم حجز موعد الغسيل بنجاح',
     'car_wash.updated' => 'تم تحديث موعد الغسيل',
+    'car_wash.deleted' => 'تم حذف موعد الغسيل',
     'car_wash.cancelled' => 'تم إلغاء موعد الغسيل',
     'car_wash.loaded' => 'تم جلب موعد الغسيل',
     'car_wash.appointments_loaded' => 'تم جلب مواعيد الغسيل',
@@ -78,4 +83,5 @@ return [
     'common.unauthorized' => 'غير مصرح',
     'common.validation_error' => 'خطأ في التحقق',
     'common.server_error' => 'خطأ في الخادم',
+    'invalid_service_type' => 'نوع الخدمة غير صحيح',
 ];

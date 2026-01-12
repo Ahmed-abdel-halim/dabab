@@ -208,12 +208,6 @@ POST /v1/orders
 GET /v1/orders/{id}
 ```
 
-### تحديث طلب
-```
-PUT /v1/orders/{id}
-```
-**ملاحظة:** يمكن تحديث الطلبات في حالة `pending` فقط
-
 ### إلغاء طلب
 ```
 POST /v1/orders/{id}/cancel
@@ -234,86 +228,6 @@ POST /v1/orders/{id}/confirm
     "payment_method": "cash"
 }
 ```
-
-### الحصول على جميع الطلبات (من كل الخدمات)
-```
-GET /v1/all-orders?status=all
-```
-**Query Parameters:**
-- `status`: all, pending, completed, cancelled
-- `lang`: ar, en
-
-**Response:**
-```json
-{
-    "status": true,
-    "message": "تم جلب جميع الطلبات",
-    "data": [
-        {
-            "id": 1,
-            "type": "order",
-            "type_name": "طلب",
-            "order_number": "ORD-2025-001",
-            "status": "pending",
-            "status_display": "قيد الانتظار",
-            "total_cost": 25.00,
-            "delivery_cost": 5.00,
-            "payment_method": "cash",
-            "payment_status": "pending",
-            "scheduled_at": "2025-12-15 14:00:00",
-            "location": { ... },
-            "items": [ ... ],
-            "created_at": "2025-12-13 10:00:00",
-            "updated_at": "2025-12-13 10:00:00"
-        },
-        {
-            "id": 1,
-            "type": "delivery",
-            "type_name": "توصيل",
-            "order_number": "DEL-2025-001",
-            "status": "completed",
-            "status_display": "مكتمل",
-            "shipment_details": "صندوق وزن 6 كيلو",
-            "delivery_cost": 15.00,
-            "created_at": "2025-12-12 09:00:00",
-            "updated_at": "2025-12-12 11:00:00"
-        },
-        {
-            "id": 1,
-            "type": "rental",
-            "type_name": "استئجار",
-            "status": "completed",
-            "status_display": "مكتمل",
-            "personal_name": "أحمد محمد",
-            "commercial_name": "صيدلية النور",
-            "store_type": "صيدلية",
-            "rental_type": "scooter_only",
-            "created_at": "2025-12-11 08:00:00",
-            "updated_at": "2025-12-11 10:00:00"
-        },
-        {
-            "id": 1,
-            "type": "car_wash",
-            "type_name": "غسيل سيارات",
-            "status": "pending",
-            "status_display": "قيد الانتظار",
-            "car_size": "large",
-            "wash_type": "interior_exterior",
-            "scheduled_date": "2025-12-15",
-            "scheduled_time": "11:00",
-            "cost": 100.00,
-            "created_at": "2025-12-10 07:00:00",
-            "updated_at": "2025-12-10 07:00:00"
-        }
-    ]
-}
-```
-**ملاحظات:**
-- يجلب الطلبات من جميع الخدمات الأربع: Orders, Deliveries, Rentals, Car Washes
-- يتم ترتيب النتائج حسب التاريخ (الأحدث أولاً)
-- `status` موحد: pending (قيد الانتظار), completed (مكتمل), cancelled (ملغي)
-- `type` يحدد نوع الخدمة: order, delivery, rental, car_wash
-- `status_display` يعرض حالة الطلب بالعربية أو الإنجليزية حسب اللغة المحددة
 
 ### إضافة طلب فرعي لطلب موجود
 ```
@@ -377,11 +291,6 @@ POST /v1/rentals
 GET /v1/rentals/{id}
 ```
 
-### تحديث طلب استئجار
-```
-PUT /v1/rentals/{id}
-```
-
 ---
 
 ## 6. التوصيل (Deliveries)
@@ -414,11 +323,6 @@ POST /v1/deliveries
 ### الحصول على طلب توصيل محدد
 ```
 GET /v1/deliveries/{id}
-```
-
-### تحديث طلب توصيل
-```
-PUT /v1/deliveries/{id}
 ```
 
 ### إلغاء طلب توصيل
@@ -564,12 +468,6 @@ GET /v1/car-washes/{id}
 - `scheduled_date_formatted`: التاريخ بصيغة YYYY-MM-DD
 - `scheduled_time_formatted`: الوقت بصيغة HH:mm
 
-### تحديث موعد غسيل
-```
-PUT /v1/car-washes/{id}
-```
-**ملاحظة:** يمكن تحديث المواعيد في حالة `pending` فقط
-
 ### إلغاء موعد غسيل
 ```
 POST /v1/car-washes/{id}/cancel
@@ -578,7 +476,190 @@ POST /v1/car-washes/{id}/cancel
 
 ---
 
-## 8. التقييمات (Ratings)
+## 8. جميع الطلبات الموحدة (All Orders)
+
+هذا القسم يحتوي على endpoints موحدة للتعامل مع جميع أنواع الطلبات (Orders, Deliveries, Rentals, Car Washes) من مكان واحد.
+
+### الحصول على جميع الطلبات (من كل الخدمات)
+```
+GET /v1/all-orders?status=all
+```
+**Query Parameters:**
+- `status`: all, pending, completed, cancelled
+- `lang`: ar, en
+
+**Response:**
+```json
+{
+    "status": true,
+    "message": "تم جلب جميع الطلبات",
+    "data": [
+        {
+            "id": 1,
+            "type": "order",
+            "type_name": "طلب",
+            "order_number": "ORD-2025-001",
+            "status": "pending",
+            "status_display": "قيد الانتظار",
+            "total_cost": 25.00,
+            "delivery_cost": 5.00,
+            "payment_method": "cash",
+            "payment_status": "pending",
+            "scheduled_at": "2025-12-15 14:00:00",
+            "location": { ... },
+            "items": [ ... ],
+            "created_at": "2025-12-13 10:00:00",
+            "updated_at": "2025-12-13 10:00:00"
+        },
+        {
+            "id": 1,
+            "type": "delivery",
+            "type_name": "توصيل",
+            "order_number": "DEL-2025-001",
+            "status": "completed",
+            "status_display": "مكتمل",
+            "shipment_details": "صندوق وزن 6 كيلو",
+            "delivery_cost": 15.00,
+            "created_at": "2025-12-12 09:00:00",
+            "updated_at": "2025-12-12 11:00:00"
+        },
+        {
+            "id": 1,
+            "type": "rental",
+            "type_name": "استئجار",
+            "status": "completed",
+            "status_display": "مكتمل",
+            "personal_name": "أحمد محمد",
+            "commercial_name": "صيدلية النور",
+            "store_type": "صيدلية",
+            "rental_type": "scooter_only",
+            "created_at": "2025-12-11 08:00:00",
+            "updated_at": "2025-12-11 10:00:00"
+        },
+        {
+            "id": 1,
+            "type": "car_wash",
+            "type_name": "غسيل سيارات",
+            "status": "pending",
+            "status_display": "قيد الانتظار",
+            "car_size": "large",
+            "wash_type": "interior_exterior",
+            "scheduled_date": "2025-12-15",
+            "scheduled_time": "11:00",
+            "cost": 100.00,
+            "created_at": "2025-12-10 07:00:00",
+            "updated_at": "2025-12-10 07:00:00"
+        }
+    ]
+}
+```
+**ملاحظات:**
+- يجلب الطلبات من جميع الخدمات الأربع: Orders, Deliveries, Rentals, Car Washes
+- يتم ترتيب النتائج حسب التاريخ (الأحدث أولاً)
+- `status` موحد: pending (قيد الانتظار), completed (مكتمل), cancelled (ملغي)
+- `type` يحدد نوع الخدمة: order, delivery, rental, car_wash
+- `status_display` يعرض حالة الطلب بالعربية أو الإنجليزية حسب اللغة المحددة
+
+### تعديل خدمة (من أي نوع)
+```
+PUT /v1/all-orders/{type}/{id}
+```
+**Path Parameters:**
+- `type`: نوع الخدمة (order, delivery, rental, car_wash)
+- `id`: معرف الخدمة
+
+**Query Parameters:**
+- `lang`: ar, en
+
+**ملاحظات:**
+- يمكن التعديل فقط للطلبات بحالة `pending`
+- كل نوع خدمة له validation خاص به
+
+**مثال لتعديل Order:**
+```json
+{
+    "items": [
+        {
+            "category_id": 1,
+            "details": "تحديث الطلب"
+        }
+    ],
+    "scheduled_at": "2025-12-15 14:00:00",
+    "location_id": 1,
+    "payment_method": "cash"
+}
+```
+
+**مثال لتعديل Delivery:**
+```json
+{
+    "shipment_details": "صندوق وزن 5 كيلو",
+    "sender_address": "العنوان الجديد",
+    "sender_lat": 24.7136,
+    "sender_lng": 46.6753,
+    "recipient_address": "عنوان المستلم",
+    "recipient_lat": 24.7136,
+    "recipient_lng": 46.6753
+}
+```
+
+**مثال لتعديل Rental:**
+```json
+{
+    "personal_name": "أحمد محمد",
+    "commercial_name": "صيدلية النور",
+    "store_type": "صيدلية",
+    "rental_type": "scooter_only",
+    "additional_details": "تفاصيل إضافية"
+}
+```
+
+**مثال لتعديل Car Wash:**
+```json
+{
+    "car_size": "large",
+    "wash_type": "interior_exterior",
+    "scheduled_date": "2025-12-15",
+    "scheduled_time": "11:00",
+    "time_period": "before_lunch",
+    "location_id": 1
+}
+```
+
+### إلغاء خدمة (من أي نوع) - Cancel Service
+```
+DELETE /v1/all-orders/{type}/{id}
+```
+**Path Parameters:**
+- `type`: نوع الخدمة (order, delivery, rental, car_wash)
+- `id`: معرف الخدمة
+
+**Query Parameters:**
+- `lang`: ar, en
+
+**ملاحظات:**
+- هذا الـ endpoint يقوم بإلغاء الخدمة (cancel) وليس حذف فعلي من قاعدة البيانات
+- **Order**: يمكن الإلغاء للطلبات بحالة `pending` أو `confirmed`، يتم تغيير status إلى `cancelled`
+- **Delivery**: يمكن الإلغاء للطلبات بحالة `pending` أو `in_progress`، يتم تغيير status إلى `cancelled`
+- **Rental**: يمكن الإلغاء للطلبات بحالة `pending` فقط، يتم تغيير status إلى `rejected`
+- **Car Wash**: يمكن الإلغاء للمواعيد بحالة `pending` أو `confirmed`، يتم تغيير status إلى `cancelled`
+
+**Response:**
+```json
+{
+    "status": true,
+    "message": "تم إلغاء الطلب",
+    "data": {
+        "id": 1,
+        "status": "cancelled",
+        ...
+    }
+}
+```
+
+---
+
+## 9. التقييمات (Ratings)
 
 ### الحصول على تقييماتي
 ```

@@ -82,43 +82,6 @@ class CarWashController extends Controller
         return $this->successResponse($carWash, __('messages.car_wash.loaded'));
     }
 
-    public function updateCarWash(Request $request, $id)
-    {
-        // التأكد من تعيين اللغة من query parameter
-        $locale = $request->query('lang', app()->getLocale());
-        if (in_array($locale, ['ar', 'en'])) {
-            app()->setLocale($locale);
-        }
-
-        $carWash = CarWash::where('user_id', $request->user()->id)
-            ->where('status', 'pending')
-            ->findOrFail($id);
-
-        $request->validate([
-            'car_size' => 'nullable|in:small,large',
-            'wash_type' => 'nullable|in:interior_exterior,exterior,interior',
-            'scheduled_date' => 'nullable|date|after_or_equal:today',
-            'scheduled_time' => 'nullable|date_format:H:i',
-            'time_period' => 'nullable|in:before_lunch,early_evening,dinner_time,late_night',
-            'location_id' => 'nullable|exists:user_locations,id',
-        ]);
-
-        $updateData = $request->only([
-            'car_size', 'wash_type', 'scheduled_date', 'scheduled_time',
-            'time_period', 'location_id'
-        ]);
-
-        if ($request->has('car_size') || $request->has('wash_type')) {
-            $carSize = $request->car_size ?? $carWash->car_size;
-            $washType = $request->wash_type ?? $carWash->wash_type;
-            $updateData['cost'] = $this->calculateCost($carSize, $washType);
-        }
-
-        $carWash->update($updateData);
-
-        return $this->successResponse($carWash->load('location'), __('messages.car_wash.updated'));
-    }
-
     public function cancelCarWash(Request $request, $id)
     {
         // التأكد من تعيين اللغة من query parameter

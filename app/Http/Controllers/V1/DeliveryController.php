@@ -80,46 +80,6 @@ class DeliveryController extends Controller
         return $this->successResponse($delivery, __('messages.delivery.loaded'));
     }
 
-    public function updateDelivery(Request $request, $id)
-    {
-        $delivery = Delivery::where('user_id', $request->user()->id)
-            ->where('status', 'pending')
-            ->findOrFail($id);
-
-        $request->validate([
-            'shipment_details' => 'nullable|string',
-            'sender_address' => 'nullable|string',
-            'sender_lat' => 'nullable|numeric',
-            'sender_lng' => 'nullable|numeric',
-            'sender_phone' => 'nullable|string',
-            'recipient_address' => 'nullable|string',
-            'recipient_lat' => 'nullable|numeric',
-            'recipient_lng' => 'nullable|numeric',
-            'recipient_phone' => 'nullable|string',
-            'payment_method' => 'nullable|in:cash,apple_pay,bank_card',
-        ]);
-
-        $updateData = $request->only([
-            'shipment_details', 'sender_address', 'sender_lat', 'sender_lng',
-            'sender_phone', 'recipient_address', 'recipient_lat', 'recipient_lng',
-            'recipient_phone', 'payment_method'
-        ]);
-
-        if (isset($request->sender_lat) && isset($request->sender_lng) &&
-            isset($request->recipient_lat) && isset($request->recipient_lng)) {
-            $updateData['delivery_cost'] = $this->calculateDeliveryCost(
-                $request->sender_lat,
-                $request->sender_lng,
-                $request->recipient_lat,
-                $request->recipient_lng
-            );
-        }
-
-        $delivery->update($updateData);
-
-        return $this->successResponse($delivery, __('messages.delivery.updated'));
-    }
-
     public function cancelDelivery(Request $request, $id)
     {
         $delivery = Delivery::where('user_id', $request->user()->id)
