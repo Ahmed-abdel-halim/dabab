@@ -903,6 +903,40 @@
 							]
 						}
 					}
+				},
+				{
+					"name": "Get All Orders - الحصول على جميع الطلبات",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Accept",
+								"value": "application/json",
+								"type": "text"
+							},
+							{
+								"key": "Authorization",
+								"value": "Bearer {{token}}",
+								"type": "text"
+							}
+						],
+						"url": {
+							"raw": "{{base_url}}/v1/all-orders?status=all&lang={{lang}}",
+							"host": ["{{base_url}}"],
+							"path": ["v1", "all-orders"],
+							"query": [
+								{
+									"key": "status",
+									"value": "all",
+									"description": "all, pending, completed, cancelled"
+								},
+								{
+									"key": "lang",
+									"value": "{{lang}}"
+								}
+							]
+						}
+					}
 				}
 			]
 		},
@@ -1334,6 +1368,64 @@
 		{
 			"name": "7. Car Wash (غسيل السيارات)",
 			"item": [
+				{
+					"name": "Get Available Dates - الحصول على الأيام المتاحة",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Accept",
+								"value": "application/json",
+								"type": "text"
+							},
+							{
+								"key": "Authorization",
+								"value": "Bearer {{token}}",
+								"type": "text"
+							}
+						],
+						"url": {
+							"raw": "{{base_url}}/v1/car-washes/available-dates?lang={{lang}}",
+							"host": ["{{base_url}}"],
+							"path": ["v1", "car-washes", "available-dates"],
+							"query": [
+								{
+									"key": "lang",
+									"value": "{{lang}}"
+								}
+							]
+						}
+					}
+				},
+				{
+					"name": "Get Time Periods - الحصول على الفترات الزمنية",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Accept",
+								"value": "application/json",
+								"type": "text"
+							},
+							{
+								"key": "Authorization",
+								"value": "Bearer {{token}}",
+								"type": "text"
+							}
+						],
+						"url": {
+							"raw": "{{base_url}}/v1/car-washes/time-periods?lang={{lang}}",
+							"host": ["{{base_url}}"],
+							"path": ["v1", "car-washes", "time-periods"],
+							"query": [
+								{
+									"key": "lang",
+									"value": "{{lang}}"
+								}
+							]
+						}
+					}
+				},
 				{
 					"name": "Get My Car Washes - الحصول على مواعيد الغسيل",
 					"request": {

@@ -23,6 +23,7 @@ return [
     'order.cancelled' => 'تم إلغاء الطلب',
     'order.loaded' => 'تم جلب الطلب',
     'order.orders_loaded' => 'تم جلب الطلبات',
+    'order.all_orders_loaded' => 'تم جلب جميع الطلبات',
     'order.confirmed' => 'تم تأكيد الطلب بنجاح',
     'order.tracking_info' => 'معلومات تتبع الطلب',
     'order.estimated_time_pending' => '30 - 45 دقيقة',
@@ -41,6 +42,9 @@ return [
     'rental.updated' => 'تم تحديث طلب الاستئجار',
     'rental.loaded' => 'تم جلب طلب الاستئجار',
     'rental.rentals_loaded' => 'تم جلب طلبات الاستئجار',
+    'rental.file_upload_failed' => 'فشل في رفع الملف',
+    'rental.create_error' => 'حدث خطأ أثناء إنشاء الطلب',
+    'rental.update_error' => 'حدث خطأ أثناء تحديث الطلب',
 
     // Delivery Messages
     'delivery.created' => 'تم إنشاء طلب التوصيل بنجاح',
@@ -58,6 +62,8 @@ return [
     'car_wash.cancelled' => 'تم إلغاء موعد الغسيل',
     'car_wash.loaded' => 'تم جلب موعد الغسيل',
     'car_wash.appointments_loaded' => 'تم جلب مواعيد الغسيل',
+    'car_wash.dates_loaded' => 'تم جلب الأيام المتاحة',
+    'car_wash.periods_loaded' => 'تم جلب الفترات الزمنية',
 
     // Rating Messages
     'rating.created' => 'تم إضافة التقييم بنجاح',

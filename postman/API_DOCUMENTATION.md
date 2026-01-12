@@ -235,6 +235,86 @@ POST /v1/orders/{id}/confirm
 }
 ```
 
+### الحصول على جميع الطلبات (من كل الخدمات)
+```
+GET /v1/all-orders?status=all
+```
+**Query Parameters:**
+- `status`: all, pending, completed, cancelled
+- `lang`: ar, en
+
+**Response:**
+```json
+{
+    "status": true,
+    "message": "تم جلب جميع الطلبات",
+    "data": [
+        {
+            "id": 1,
+            "type": "order",
+            "type_name": "طلب",
+            "order_number": "ORD-2025-001",
+            "status": "pending",
+            "status_display": "قيد الانتظار",
+            "total_cost": 25.00,
+            "delivery_cost": 5.00,
+            "payment_method": "cash",
+            "payment_status": "pending",
+            "scheduled_at": "2025-12-15 14:00:00",
+            "location": { ... },
+            "items": [ ... ],
+            "created_at": "2025-12-13 10:00:00",
+            "updated_at": "2025-12-13 10:00:00"
+        },
+        {
+            "id": 1,
+            "type": "delivery",
+            "type_name": "توصيل",
+            "order_number": "DEL-2025-001",
+            "status": "completed",
+            "status_display": "مكتمل",
+            "shipment_details": "صندوق وزن 6 كيلو",
+            "delivery_cost": 15.00,
+            "created_at": "2025-12-12 09:00:00",
+            "updated_at": "2025-12-12 11:00:00"
+        },
+        {
+            "id": 1,
+            "type": "rental",
+            "type_name": "استئجار",
+            "status": "completed",
+            "status_display": "مكتمل",
+            "personal_name": "أحمد محمد",
+            "commercial_name": "صيدلية النور",
+            "store_type": "صيدلية",
+            "rental_type": "scooter_only",
+            "created_at": "2025-12-11 08:00:00",
+            "updated_at": "2025-12-11 10:00:00"
+        },
+        {
+            "id": 1,
+            "type": "car_wash",
+            "type_name": "غسيل سيارات",
+            "status": "pending",
+            "status_display": "قيد الانتظار",
+            "car_size": "large",
+            "wash_type": "interior_exterior",
+            "scheduled_date": "2025-12-15",
+            "scheduled_time": "11:00",
+            "cost": 100.00,
+            "created_at": "2025-12-10 07:00:00",
+            "updated_at": "2025-12-10 07:00:00"
+        }
+    ]
+}
+```
+**ملاحظات:**
+- يجلب الطلبات من جميع الخدمات الأربع: Orders, Deliveries, Rentals, Car Washes
+- يتم ترتيب النتائج حسب التاريخ (الأحدث أولاً)
+- `status` موحد: pending (قيد الانتظار), completed (مكتمل), cancelled (ملغي)
+- `type` يحدد نوع الخدمة: order, delivery, rental, car_wash
+- `status_display` يعرض حالة الطلب بالعربية أو الإنجليزية حسب اللغة المحددة
+
 ### إضافة طلب فرعي لطلب موجود
 ```
 POST /v1/orders/{id}/items
@@ -355,10 +435,106 @@ GET /v1/deliveries/{id}/track
 
 ## 7. غسيل السيارات (Car Wash)
 
+### الحصول على الأيام المتاحة
+```
+GET /v1/car-washes/available-dates
+```
+**Response:**
+```json
+{
+    "status": true,
+    "message": "تم جلب الأيام المتاحة",
+    "data": [
+        {
+            "date": "2025-12-13",
+            "day_name": "الخميس",
+            "day_number": "13",
+            "day_short": "خ"
+        },
+        {
+            "date": "2025-12-14",
+            "day_name": "الجمعة",
+            "day_number": "14",
+            "day_short": "ج"
+        }
+    ]
+}
+```
+**ملاحظة:** يعيد الأيام المتاحة للأسبوع القادم (7 أيام من اليوم)
+
+### الحصول على الفترات الزمنية
+```
+GET /v1/car-washes/time-periods?lang=ar
+```
+**ملاحظة:** الاسم (`name`) يعتمد على اللغة المحددة في `lang` parameter
+
+**Response (عند lang=ar):**
+```json
+{
+    "status": true,
+    "message": "تم جلب الفترات الزمنية",
+    "data": [
+        {
+            "period": "before_lunch",
+            "name": "قبل الغداء",
+            "time_range": "11:00 - 13:00",
+            "start_time": "11:00",
+            "end_time": "13:00",
+            "period_type": "afternoon"
+        },
+        {
+            "period": "early_evening",
+            "name": "بداية المساء",
+            "time_range": "17:30 - 19:30",
+            "start_time": "17:30",
+            "end_time": "19:30",
+            "period_type": "evening"
+        },
+        {
+            "period": "dinner_time",
+            "name": "وقت العشاء",
+            "time_range": "19:30 - 21:30",
+            "start_time": "19:30",
+            "end_time": "21:30",
+            "period_type": "evening"
+        },
+        {
+            "period": "late_night",
+            "name": "آخر الليل",
+            "time_range": "21:30 - 00:30",
+            "start_time": "21:30",
+            "end_time": "00:30",
+            "period_type": "evening"
+        }
+    ]
+}
+```
+
+**Response (عند lang=en):**
+```json
+{
+    "status": true,
+    "message": "Time periods loaded successfully",
+    "data": [
+        {
+            "period": "before_lunch",
+            "name": "Before Lunch",
+            "time_range": "11:00 - 13:00",
+            "start_time": "11:00",
+            "end_time": "13:00",
+            "period_type": "afternoon"
+        },
+        ...
+    ]
+}
+```
+
 ### الحصول على مواعيد الغسيل
 ```
 GET /v1/car-washes?status=all
 ```
+**Query Parameters:**
+- `status`: all, pending, confirmed, completed, cancelled
 
 ### حجز موعد غسيل
 ```
@@ -369,27 +545,36 @@ POST /v1/car-washes
 {
     "car_size": "large", // small, large
     "wash_type": "interior_exterior", // interior_exterior, exterior, interior
-    "scheduled_date": "2025-12-13",
-    "scheduled_time": "11:00",
+    "scheduled_date": "2025-12-13", // YYYY-MM-DD
+    "scheduled_time": "11:00", // HH:mm (24 ساعة)
     "time_period": "before_lunch", // before_lunch, early_evening, dinner_time, late_night
     "location_id": 1 // ID من جدول user_locations
 }
 ```
+**ملاحظات:**
+- `scheduled_date` يجب أن يكون تاريخ اليوم أو بعده
+- `scheduled_time` بصيغة 24 ساعة (HH:mm)
+- `time_period` يحدد الفترة الزمنية (قبل الغداء، بداية المساء، وقت العشاء، آخر الليل)
 
 ### الحصول على موعد غسيل محدد
 ```
 GET /v1/car-washes/{id}
 ```
+**Response يتضمن:**
+- `scheduled_date_formatted`: التاريخ بصيغة YYYY-MM-DD
+- `scheduled_time_formatted`: الوقت بصيغة HH:mm
 
 ### تحديث موعد غسيل
 ```
 PUT /v1/car-washes/{id}
 ```
+**ملاحظة:** يمكن تحديث المواعيد في حالة `pending` فقط
 
 ### إلغاء موعد غسيل
 ```
 POST /v1/car-washes/{id}/cancel
 ```
+**ملاحظة:** يمكن إلغاء المواعيد في حالة `pending` أو `confirmed` فقط
 
 ---
 

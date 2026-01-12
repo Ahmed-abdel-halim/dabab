@@ -9,9 +9,6 @@ class Order extends Model
     protected $fillable = [
         'user_id',
         'order_number',
-        'category_id',
-        'category_name',
-        'details',
         'delivery_cost',
         'total_cost',
         'status', // pending, confirmed, in_progress, completed, cancelled
@@ -35,11 +32,6 @@ class Order extends Model
     public function location()
     {
         return $this->belongsTo(UserLocation::class, 'location_id');
-    }
-
-    public function category()
-    {
-        return $this->belongsTo(OrderCategory::class, 'category_id');
     }
 
     public function rating()

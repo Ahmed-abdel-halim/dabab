@@ -31,12 +31,15 @@ class SetLocale
         
         // Validate locale and set default
         $supportedLocales = ['ar', 'en'];
-        if (!in_array($locale, $supportedLocales)) {
+        if (!$locale || !in_array($locale, $supportedLocales)) {
             $locale = config('app.locale', 'en');
         }
         
-        // Set the application locale
+        // Set the application locale explicitly
         App::setLocale($locale);
+        
+        // Also set it in the request for consistency
+        $request->setLocale($locale);
         
         // Store in session for future requests
         if ($request->hasSession()) {

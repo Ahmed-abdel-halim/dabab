@@ -3,6 +3,7 @@
 namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Support\Facades\Storage;
 
 class Rental extends Model
 {
@@ -20,6 +21,25 @@ class Rental extends Model
     public function user()
     {
         return $this->belongsTo(User::class);
+    }
+
+    /**
+     * Get the full URL for the commercial registration file
+     */
+    public function getCommercialRegistrationFileAttribute($value)
+    {
+        if ($value) {
+            return Storage::disk('public')->url($value);
+        }
+        return null;
+    }
+
+    /**
+     * Get the original file path (for internal use like deletion)
+     */
+    public function getOriginalFilePath()
+    {
+        return $this->attributes['commercial_registration_file'] ?? null;
     }
 }
 

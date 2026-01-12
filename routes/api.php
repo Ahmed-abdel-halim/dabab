@@ -9,6 +9,7 @@ use App\Http\Controllers\V1\DeliveryController;
 use App\Http\Controllers\V1\CarWashController;
 use App\Http\Controllers\V1\RatingController;
 use App\Http\Controllers\V1\AddressController;
+use App\Http\Controllers\V1\AllOrdersController;
 
 // Public Routes
 Route::post('v1/send-otp', [AuthController::class, 'sendVerificationCode']);
@@ -69,6 +70,8 @@ Route::middleware('auth:sanctum')->group(function () {
 
     // Car Wash Routes
     Route::prefix('v1/car-washes')->group(function () {
+        Route::get('/available-dates', [CarWashController::class, 'getAvailableDates']);
+        Route::get('/time-periods', [CarWashController::class, 'getTimePeriods']);
         Route::get('/', [CarWashController::class, 'getMyCarWashes']);
         Route::post('/', [CarWashController::class, 'createCarWash']);
         Route::get('/{id}', [CarWashController::class, 'getCarWash']);
@@ -81,4 +84,7 @@ Route::middleware('auth:sanctum')->group(function () {
         Route::get('/', [RatingController::class, 'getMyRatings']);
         Route::post('/', [RatingController::class, 'createRating']);
     });
+
+    // All Orders Route (جميع الطلبات من كل الخدمات)
+    Route::get('v1/all-orders', [AllOrdersController::class, 'getAllOrders']);
 });

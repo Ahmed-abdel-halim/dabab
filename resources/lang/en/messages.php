@@ -23,6 +23,7 @@ return [
     'order.cancelled' => 'Order cancelled successfully',
     'order.loaded' => 'Order loaded successfully',
     'order.orders_loaded' => 'Orders loaded successfully',
+    'order.all_orders_loaded' => 'All orders loaded successfully',
     'order.confirmed' => 'Order confirmed successfully',
     'order.tracking_info' => 'Order tracking information',
     'order.estimated_time_pending' => '30 - 45 minutes',
@@ -41,6 +42,9 @@ return [
     'rental.updated' => 'Rental request updated successfully',
     'rental.loaded' => 'Rental request loaded successfully',
     'rental.rentals_loaded' => 'Rental requests loaded successfully',
+    'rental.file_upload_failed' => 'File upload failed',
+    'rental.create_error' => 'An error occurred while creating the request',
+    'rental.update_error' => 'An error occurred while updating the request',
 
     // Delivery Messages
     'delivery.created' => 'Delivery request created successfully',
@@ -58,6 +62,8 @@ return [
     'car_wash.cancelled' => 'Car wash appointment cancelled successfully',
     'car_wash.loaded' => 'Car wash appointment loaded successfully',
     'car_wash.appointments_loaded' => 'Car wash appointments loaded successfully',
+    'car_wash.dates_loaded' => 'Available dates loaded successfully',
+    'car_wash.periods_loaded' => 'Time periods loaded successfully',
 
     // Rating Messages
     'rating.created' => 'Rating added successfully',

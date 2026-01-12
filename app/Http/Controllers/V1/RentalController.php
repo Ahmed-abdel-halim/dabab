@@ -23,23 +23,36 @@ class RentalController extends Controller
             'additional_details' => 'nullable|string',
         ]);
 
-        $filePath = null;
-        if ($request->hasFile('commercial_registration_file')) {
-            $filePath = $request->file('commercial_registration_file')->store('rentals', 'public');
+        try {
+            $filePath = null;
+            if ($request->hasFile('commercial_registration_file')) {
+                $file = $request->file('commercial_registration_file');
+                $filePath = $file->store('rentals', 'public');
+                
+                if (!$filePath) {
+                    return $this->errorResponse(__('messages.rental.file_upload_failed'), 500);
+                }
+            }
+
+            $rental = Rental::create([
+                'user_id' => $request->user()->id,
+                'personal_name' => $request->personal_name,
+                'commercial_name' => $request->commercial_name,
+                'store_type' => $request->store_type,
+                'rental_type' => $request->rental_type,
+                'commercial_registration_file' => $filePath,
+                'additional_details' => $request->additional_details,
+                'status' => 'pending',
+            ]);
+
+            return $this->successResponse($rental, __('messages.rental.created'));
+        } catch (\Exception $e) {
+            // في حالة حدوث خطأ، احذف الملف إذا تم رفعه
+            if (isset($filePath) && $filePath) {
+                Storage::disk('public')->delete($filePath);
+            }
+            return $this->errorResponse(__('messages.rental.create_error') . ': ' . $e->getMessage(), 500);
         }
-
-        $rental = Rental::create([
-            'user_id' => $request->user()->id,
-            'personal_name' => $request->personal_name,
-            'commercial_name' => $request->commercial_name,
-            'store_type' => $request->store_type,
-            'rental_type' => $request->rental_type,
-            'commercial_registration_file' => $filePath,
-            'additional_details' => $request->additional_details,
-            'status' => 'pending',
-        ]);
-
-        return $this->successResponse($rental, __('messages.rental.created'));
     }
 
     public function getMyRentals(Request $request)
@@ -74,19 +87,34 @@ class RentalController extends Controller
             'additional_details' => 'nullable|string',
         ]);
 
-        if ($request->hasFile('commercial_registration_file')) {
-            if ($rental->commercial_registration_file) {
-                Storage::disk('public')->delete($rental->commercial_registration_file);
+        try {
+            $updateData = $request->only([
+                'personal_name', 'commercial_name', 'store_type', 'rental_type', 'additional_details'
+            ]);
+
+            if ($request->hasFile('commercial_registration_file')) {
+                // حذف الملف القديم إذا كان موجوداً
+                $oldFilePath = $rental->attributes['commercial_registration_file'] ?? null;
+                if ($oldFilePath) {
+                    Storage::disk('public')->delete($oldFilePath);
+                }
+                
+                $file = $request->file('commercial_registration_file');
+                $filePath = $file->store('rentals', 'public');
+                
+                if (!$filePath) {
+                    return $this->errorResponse(__('messages.rental.file_upload_failed'), 500);
+                }
+                
+                $updateData['commercial_registration_file'] = $filePath;
             }
-            $filePath = $request->file('commercial_registration_file')->store('rentals', 'public');
-            $rental->commercial_registration_file = $filePath;
+
+            $rental->update($updateData);
+
+            return $this->successResponse($rental, __('messages.rental.updated'));
+        } catch (\Exception $e) {
+            return $this->errorResponse(__('messages.rental.update_error') . ': ' . $e->getMessage(), 500);
         }
-
-        $rental->update($request->only([
-            'personal_name', 'commercial_name', 'store_type', 'rental_type', 'additional_details'
-        ]));
-
-        return $this->successResponse($rental, __('messages.rental.updated'));
     }
 }
 

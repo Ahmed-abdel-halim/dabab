@@ -25,6 +25,31 @@ class CarWash extends Model
         'cost' => 'decimal:2',
     ];
 
+    protected $appends = [
+        'scheduled_date_formatted',
+        'scheduled_time_formatted',
+    ];
+
+    public function getScheduledDateFormattedAttribute()
+    {
+        return $this->scheduled_date ? $this->scheduled_date->format('Y-m-d') : null;
+    }
+
+    public function getScheduledTimeFormattedAttribute()
+    {
+        if ($this->scheduled_time) {
+            if (is_string($this->scheduled_time)) {
+                // إذا كان string، أعد HH:mm فقط
+                return substr($this->scheduled_time, 0, 5);
+            }
+            // إذا كان Carbon instance
+            if (method_exists($this->scheduled_time, 'format')) {
+                return $this->scheduled_time->format('H:i');
+            }
+        }
+        return null;
+    }
+
     public function user()
     {
         return $this->belongsTo(User::class);

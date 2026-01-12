@@ -30,7 +30,16 @@ trait ApiResponseTrait
 
         // if it's a collection or array
         if (is_iterable($data)) {
-            $resourceName = $this->resolveResourceName(collect($data)->first());
+            $firstItem = collect($data)->first();
+            // إذا كان array من arrays (مثل array الأيام)، استخدم 'data' كاسم
+            if (is_array($firstItem) && !is_object($firstItem)) {
+                return response()->json([
+                    'status'  => true,
+                    'message' => $message,
+                    'data'    => $data
+                ], $code);
+            }
+            $resourceName = $this->resolveResourceName($firstItem);
             return response()->json([
                 'status'  => true,
                 'message' => $message,

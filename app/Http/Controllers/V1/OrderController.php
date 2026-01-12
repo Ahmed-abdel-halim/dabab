@@ -25,7 +25,6 @@ class OrderController extends Controller
         $request->validate([
             'items' => 'required|array|min:1',
             'items.*.category_id' => 'required|exists:order_categories,id',
-            'items.*.category_name' => 'nullable|string',
             'items.*.details' => 'required|string',
             'scheduled_at' => 'nullable|date',
             'location_id' => 'nullable|exists:user_locations,id',
@@ -40,9 +39,6 @@ class OrderController extends Controller
         $order = Order::create([
             'user_id' => $request->user()->id,
             'order_number' => 'ORD-' . strtoupper(Str::random(10)),
-            'category_id' => null,
-            'category_name' => null,
-            'details' => null,
             'scheduled_at' => $request->scheduled_at ? now()->parse($request->scheduled_at) : null,
             'location_id' => $request->location_id,
             'payment_method' => $request->payment_method,
@@ -60,7 +56,6 @@ class OrderController extends Controller
             OrderItem::create([
                 'order_id' => $order->id,
                 'category_id' => $item['category_id'],
-                'category_name' => $category->name,
                 'details' => $item['details'],
                 'delivery_cost' => $itemDeliveryCost,
                 'order_index' => $index,
@@ -200,7 +195,6 @@ class OrderController extends Controller
 
         $request->validate([
             'category_id' => 'required|exists:order_categories,id',
-            'category_name' => 'nullable|string',
             'details' => 'required|string',
         ]);
 
@@ -214,7 +208,6 @@ class OrderController extends Controller
         $orderItem = OrderItem::create([
             'order_id' => $order->id,
             'category_id' => $request->category_id,
-            'category_name' => $category->name,
             'details' => $request->details,
             'delivery_cost' => $itemDeliveryCost,
             'order_index' => $lastIndex + 1,
@@ -241,7 +234,6 @@ class OrderController extends Controller
 
         $request->validate([
             'category_id' => 'nullable|exists:order_categories,id',
-            'category_name' => 'nullable|string',
             'details' => 'nullable|string',
         ]);
 
@@ -255,11 +247,9 @@ class OrderController extends Controller
         }
 
         $categoryId = $request->category_id ?? $orderItem->category_id;
-        $category = OrderCategory::findOrFail($categoryId);
         
         $orderItem->update([
             'category_id' => $categoryId,
-            'category_name' => $category->name,
             'details' => $request->details ?? $orderItem->details,
             'delivery_cost' => $newCost,
         ]);
