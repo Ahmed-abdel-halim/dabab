@@ -30,6 +30,8 @@ return [
     'order.estimated_time_pending' => '30 - 45 minutes',
     'order.estimated_time_confirmed' => '20 - 35 minutes',
     'order.estimated_time_in_progress' => '10 - 20 minutes',
+    'order.reordered' => 'Order reordered successfully',
+    'order.cannot_reorder_pending_cancelled' => 'Cannot reorder pending or cancelled orders',
 
     // Address Messages
     'address.created' => 'Address added successfully',
@@ -48,6 +50,9 @@ return [
     'rental.file_upload_failed' => 'File upload failed',
     'rental.create_error' => 'An error occurred while creating the request',
     'rental.update_error' => 'An error occurred while updating the request',
+    'rental.reordered' => 'Rental request reordered successfully',
+    'rental.cannot_reorder_pending_cancelled' => 'Cannot reorder pending or cancelled requests',
+    'rental.reorder_error' => 'An error occurred while reordering the request',
 
     // Delivery Messages
     'delivery.created' => 'Delivery request created successfully',
@@ -59,6 +64,8 @@ return [
     'delivery.tracking_info' => 'Delivery tracking information',
     'delivery.estimated_time_pending' => '30 - 45 minutes',
     'delivery.estimated_time_in_progress' => '15 - 30 minutes',
+    'delivery.reordered' => 'Delivery request reordered successfully',
+    'delivery.cannot_reorder_pending_cancelled' => 'Cannot reorder pending or cancelled requests',
 
     // Car Wash Messages
     'car_wash.created' => 'Car wash appointment booked successfully',
@@ -69,6 +76,18 @@ return [
     'car_wash.appointments_loaded' => 'Car wash appointments loaded successfully',
     'car_wash.dates_loaded' => 'Available dates loaded successfully',
     'car_wash.periods_loaded' => 'Time periods loaded successfully',
+    'car_wash.reordered' => 'Car wash appointment reordered successfully',
+    'car_wash.cannot_reorder_pending_cancelled' => 'Cannot reorder pending or cancelled appointments',
+
+    // Reorder Messages
+    'reorder.created' => 'Order reordered successfully',
+    'reorder.order_created' => 'Order reordered successfully',
+    'reorder.rental_created' => 'Rental request reordered successfully',
+    'reorder.delivery_created' => 'Delivery request reordered successfully',
+    'reorder.car_wash_created' => 'Car wash appointment reordered successfully',
+    'reorder.not_found' => 'Original order not found',
+    'reorder.cannot_reorder_pending_cancelled' => 'Cannot reorder pending or cancelled orders',
+    'reorder.invalid_type' => 'Invalid service type',
 
     // Rating Messages
     'rating.created' => 'Rating added successfully',

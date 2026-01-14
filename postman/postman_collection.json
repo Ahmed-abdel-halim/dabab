@@ -859,6 +859,50 @@
 							]
 						}
 					}
+				},
+				{
+					"name": "Reorder - إعادة طلب سابق",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Accept",
+								"value": "application/json",
+								"type": "text"
+							},
+							{
+								"key": "Content-Type",
+								"value": "application/json",
+								"type": "text"
+							},
+							{
+								"key": "Authorization",
+								"value": "Bearer {{token}}",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"location_id\": 1,\n    \"payment_method\": \"cash\"\n}"
+						},
+						"url": {
+							"raw": "{{base_url}}/v1/reorder/order/:id?lang={{lang}}",
+							"host": ["{{base_url}}"],
+							"path": ["v1", "reorder", "order", ":id"],
+							"query": [
+								{
+									"key": "lang",
+									"value": "{{lang}}"
+								}
+							],
+							"variable": [
+								{
+									"key": "id",
+									"value": "1"
+								}
+							]
+						}
+					}
 				}
 			]
 		},
@@ -979,6 +1023,58 @@
 							"raw": "{{base_url}}/v1/rentals/:id?lang={{lang}}",
 							"host": ["{{base_url}}"],
 							"path": ["v1", "rentals", ":id"],
+							"query": [
+								{
+									"key": "lang",
+									"value": "{{lang}}"
+								}
+							],
+							"variable": [
+								{
+									"key": "id",
+									"value": "1"
+								}
+							]
+						}
+					}
+				},
+				{
+					"name": "Reorder - إعادة طلب استئجار سابق",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Accept",
+								"value": "application/json",
+								"type": "text"
+							},
+							{
+								"key": "Authorization",
+								"value": "Bearer {{token}}",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "formdata",
+							"formdata": [
+								{
+									"key": "personal_name",
+									"value": "نادية أحمد",
+									"type": "text",
+									"disabled": true
+								},
+								{
+									"key": "rental_type",
+									"value": "scooter_with_driver",
+									"type": "text",
+									"disabled": true
+								}
+							]
+						},
+						"url": {
+							"raw": "{{base_url}}/v1/reorder/rental/:id?lang={{lang}}",
+							"host": ["{{base_url}}"],
+							"path": ["v1", "reorder", "rental", ":id"],
 							"query": [
 								{
 									"key": "lang",
@@ -1161,6 +1257,50 @@
 							"raw": "{{base_url}}/v1/deliveries/:id/track?lang={{lang}}",
 							"host": ["{{base_url}}"],
 							"path": ["v1", "deliveries", ":id", "track"],
+							"query": [
+								{
+									"key": "lang",
+									"value": "{{lang}}"
+								}
+							],
+							"variable": [
+								{
+									"key": "id",
+									"value": "1"
+								}
+							]
+						}
+					}
+				},
+				{
+					"name": "Reorder - إعادة طلب توصيل سابق",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Accept",
+								"value": "application/json",
+								"type": "text"
+							},
+							{
+								"key": "Content-Type",
+								"value": "application/json",
+								"type": "text"
+							},
+							{
+								"key": "Authorization",
+								"value": "Bearer {{token}}",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"payment_method\": \"cash\"\n}"
+						},
+						"url": {
+							"raw": "{{base_url}}/v1/reorder/delivery/:id?lang={{lang}}",
+							"host": ["{{base_url}}"],
+							"path": ["v1", "reorder", "delivery", ":id"],
 							"query": [
 								{
 									"key": "lang",
@@ -1380,6 +1520,55 @@
 							]
 						}
 					}
+				},
+				{
+					"name": "Reorder - إعادة موعد غسيل سابق",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Accept",
+								"value": "application/json",
+								"type": "text"
+							},
+							{
+								"key": "Content-Type",
+								"value": "application/json",
+								"type": "text"
+							},
+							{
+								"key": "Authorization",
+								"value": "Bearer {{token}}",
+								"type": "text"
+							},
+							{
+								"key": "X-Service-Type",
+								"value": "car_wash",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{}"
+						},
+						"url": {
+							"raw": "{{base_url}}/v1/reorder/car_wash/:id?lang={{lang}}",
+							"host": ["{{base_url}}"],
+							"path": ["v1", "reorder", "car_wash", ":id"],
+							"query": [
+								{
+									"key": "lang",
+									"value": "{{lang}}"
+								}
+							],
+							"variable": [
+								{
+									"key": "id",
+									"value": "1"
+								}
+							]
+						}
+					}
 				}
 			]
 		},
@@ -1573,6 +1762,189 @@
 									"value": "order",
 									"description": "order, delivery, rental, car_wash"
 								},
+								{
+									"key": "id",
+									"value": "1"
+								}
+							]
+						}
+					}
+				}
+			]
+		},
+		{
+			"name": "9. Reorder (إعادة الطلبات)",
+			"item": [
+				{
+					"name": "Reorder Order - إعادة طلب سابق",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Accept",
+								"value": "application/json",
+								"type": "text"
+							},
+							{
+								"key": "Content-Type",
+								"value": "application/json",
+								"type": "text"
+							},
+							{
+								"key": "Authorization",
+								"value": "Bearer {{token}}",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"location_id\": 1,\n    \"payment_method\": \"cash\"\n}"
+						},
+						"url": {
+							"raw": "{{base_url}}/v1/reorder/order/:id?lang={{lang}}",
+							"host": ["{{base_url}}"],
+							"path": ["v1", "reorder", "order", ":id"],
+							"query": [
+								{
+									"key": "lang",
+									"value": "{{lang}}"
+								}
+							],
+							"variable": [
+								{
+									"key": "id",
+									"value": "1"
+								}
+							]
+						}
+					}
+				},
+				{
+					"name": "Reorder Rental - إعادة طلب استئجار سابق",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Accept",
+								"value": "application/json",
+								"type": "text"
+							},
+							{
+								"key": "Authorization",
+								"value": "Bearer {{token}}",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "formdata",
+							"formdata": [
+								{
+									"key": "rental_type",
+									"value": "scooter_with_driver",
+									"type": "text",
+									"disabled": true
+								}
+							]
+						},
+						"url": {
+							"raw": "{{base_url}}/v1/reorder/rental/:id?lang={{lang}}",
+							"host": ["{{base_url}}"],
+							"path": ["v1", "reorder", "rental", ":id"],
+							"query": [
+								{
+									"key": "lang",
+									"value": "{{lang}}"
+								}
+							],
+							"variable": [
+								{
+									"key": "id",
+									"value": "1"
+								}
+							]
+						}
+					}
+				},
+				{
+					"name": "Reorder Delivery - إعادة طلب توصيل سابق",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Accept",
+								"value": "application/json",
+								"type": "text"
+							},
+							{
+								"key": "Content-Type",
+								"value": "application/json",
+								"type": "text"
+							},
+							{
+								"key": "Authorization",
+								"value": "Bearer {{token}}",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"payment_method\": \"cash\"\n}"
+						},
+						"url": {
+							"raw": "{{base_url}}/v1/reorder/delivery/:id?lang={{lang}}",
+							"host": ["{{base_url}}"],
+							"path": ["v1", "reorder", "delivery", ":id"],
+							"query": [
+								{
+									"key": "lang",
+									"value": "{{lang}}"
+								}
+							],
+							"variable": [
+								{
+									"key": "id",
+									"value": "1"
+								}
+							]
+						}
+					}
+				},
+				{
+					"name": "Reorder Car Wash - إعادة موعد غسيل سابق",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Accept",
+								"value": "application/json",
+								"type": "text"
+							},
+							{
+								"key": "Content-Type",
+								"value": "application/json",
+								"type": "text"
+							},
+							{
+								"key": "Authorization",
+								"value": "Bearer {{token}}",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{}"
+						},
+						"url": {
+							"raw": "{{base_url}}/v1/reorder/car_wash/:id?lang={{lang}}",
+							"host": ["{{base_url}}"],
+							"path": ["v1", "reorder", "car_wash", ":id"],
+							"query": [
+								{
+									"key": "lang",
+									"value": "{{lang}}"
+								}
+							],
+							"variable": [
 								{
 									"key": "id",
 									"value": "1"

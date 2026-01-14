@@ -10,6 +10,7 @@ use App\Http\Controllers\V1\CarWashController;
 use App\Http\Controllers\V1\RatingController;
 use App\Http\Controllers\V1\AddressController;
 use App\Http\Controllers\V1\AllOrdersController;
+use App\Http\Controllers\V1\ReorderController;
 
 // Public Routes
 Route::post('v1/send-otp', [AuthController::class, 'sendVerificationCode']);
@@ -24,6 +25,9 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::post('v1/complete-location', [AuthController::class, 'completeLocation']);
     Route::get('v1/mylocation', [AuthController::class, 'getLocation']);
     Route::get('v1/profile', [AuthController::class, 'profile']);
+
+    // Reorder Route - واحد لكل الخدمات
+    Route::post('v1/reorder/{type}/{id}', [ReorderController::class, 'reorder']);
 
     // Address Routes
     Route::prefix('v1/addresses')->group(function () {

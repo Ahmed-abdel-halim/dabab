@@ -30,6 +30,8 @@ return [
     'order.estimated_time_pending' => '30 - 45 دقيقة',
     'order.estimated_time_confirmed' => '20 - 35 دقيقة',
     'order.estimated_time_in_progress' => '10 - 20 دقيقة',
+    'order.reordered' => 'تم إعادة الطلب بنجاح',
+    'order.cannot_reorder_pending_cancelled' => 'لا يمكن إعادة طلب في حالة pending أو cancelled',
 
     // Address Messages
     'address.created' => 'تم إضافة العنوان بنجاح',
@@ -48,6 +50,9 @@ return [
     'rental.file_upload_failed' => 'فشل في رفع الملف',
     'rental.create_error' => 'حدث خطأ أثناء إنشاء الطلب',
     'rental.update_error' => 'حدث خطأ أثناء تحديث الطلب',
+    'rental.reordered' => 'تم إعادة طلب الاستئجار بنجاح',
+    'rental.cannot_reorder_pending_cancelled' => 'لا يمكن إعادة طلب في حالة pending أو cancelled',
+    'rental.reorder_error' => 'حدث خطأ أثناء إعادة الطلب',
 
     // Delivery Messages
     'delivery.created' => 'تم إنشاء طلب التوصيل بنجاح',
@@ -59,6 +64,8 @@ return [
     'delivery.tracking_info' => 'معلومات تتبع التوصيل',
     'delivery.estimated_time_pending' => '30 - 45 دقيقة',
     'delivery.estimated_time_in_progress' => '15 - 30 دقيقة',
+    'delivery.reordered' => 'تم إعادة طلب التوصيل بنجاح',
+    'delivery.cannot_reorder_pending_cancelled' => 'لا يمكن إعادة طلب في حالة pending أو cancelled',
 
     // Car Wash Messages
     'car_wash.created' => 'تم حجز موعد الغسيل بنجاح',
@@ -69,6 +76,18 @@ return [
     'car_wash.appointments_loaded' => 'تم جلب مواعيد الغسيل',
     'car_wash.dates_loaded' => 'تم جلب الأيام المتاحة',
     'car_wash.periods_loaded' => 'تم جلب الفترات الزمنية',
+    'car_wash.reordered' => 'تم إعادة موعد الغسيل بنجاح',
+    'car_wash.cannot_reorder_pending_cancelled' => 'لا يمكن إعادة موعد في حالة pending أو cancelled',
+
+    // Reorder Messages
+    'reorder.created' => 'تم إعادة الطلب بنجاح',
+    'reorder.order_created' => 'تم إعادة الطلب بنجاح',
+    'reorder.rental_created' => 'تم إعادة طلب الاستئجار بنجاح',
+    'reorder.delivery_created' => 'تم إعادة طلب التوصيل بنجاح',
+    'reorder.car_wash_created' => 'تم إعادة موعد الغسيل بنجاح',
+    'reorder.not_found' => 'الطلب الأصلي غير موجود',
+    'reorder.cannot_reorder_pending_cancelled' => 'لا يمكن إعادة طلب في حالة pending أو cancelled',
+    'reorder.invalid_type' => 'نوع الخدمة غير صحيح',
 
     // Rating Messages
     'rating.created' => 'تم إضافة التقييم بنجاح',

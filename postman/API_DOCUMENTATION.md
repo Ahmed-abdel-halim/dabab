@@ -681,7 +681,251 @@ POST /v1/ratings
 
 ---
 
+## 9. إعادة الطلبات (Reorder)
+
+### الوصف العام
+تتيح هذه الـ endpoints إمكانية إعادة طلب سابق بنفس البيانات أو مع تعديلات على بعض البيانات. يجب أن يكون الطلب القديم قد اكتمل (في حالة completed أو in_progress)، ولا يمكن إعادة الطلبات في حالة pending أو cancelled.
+
+**Endpoint الموحد:**
+```
+POST /v1/reorder/{type}/{id}
+```
+
+حيث:
+- `{type}` - نوع الخدمة (required): order, rental, delivery, car_wash
+- `{id}` - معرف الطلب القديم (required)
+
+---
+
+### 1. إعادة طلب (Reorder Order)
+
+```
+POST /v1/reorder/order/{id}
+```
+
+**Parameters:**
+- `:id` - معرف الطلب القديم (required)
+
+**Body (اختياري تماماً):**
+```json
+{
+    "location_id": 1,
+    "payment_method": "cash"
+}
+```
+
+**الحقول:**
+- `scheduled_at`: تاريخ ووقت الطلب الجديد (اختياري تماماً، سيتم تحديده تلقائياً إن لم يُحدد)
+- `location_id`: معرف الموقع الجديد (اختياري)
+- `payment_method`: طريقة الدفع (اختياري: cash, apple_pay, bank_card)
+
+**Response:**
+```json
+{
+    "success": true,
+    "message": "تم إعادة الطلب بنجاح",
+    "data": {
+        "type": "order",
+        "data": {
+            "id": 5,
+            "user_id": 1,
+            "order_number": "ORD-ABC123DEF",
+            "status": "pending",
+            "total_cost": 100,
+            "delivery_cost": 20,
+            "items": [...]
+        }
+    }
+}
+```
+
+---
+
+### 2. إعادة طلب استئجار (Reorder Rental)
+
+```
+POST /v1/reorder/rental/{id}
+```
+
+**Parameters:**
+- `:id` - معرف طلب الاستئجار القديم (required)
+
+**Body (Form Data - اختياري تماماً):**
+```
+[Body فارغ - سيتم استخدام نفس البيانات من الطلب القديم]
+```
+
+**مثال متقدم (مع تعديلات):**
+```
+rental_type: scooter_with_driver (تحديث نوع الإيجار فقط)
+```
+
+**الحقول:**
+- `personal_name`: الاسم الشخصي (اختياري)
+- `commercial_name`: الاسم التجاري (اختياري)
+- `store_type`: نوع المتجر (اختياري)
+- `rental_type`: نوع الإيجار (اختياري: scooter_only, scooter_with_driver)
+- `commercial_registration_file`: ملف التسجيل التجاري (اختياري)
+- `additional_details`: تفاصيل إضافية (اختياري)
+
+**Response:**
+```json
+{
+    "success": true,
+    "message": "تم إعادة طلب الاستئجار بنجاح",
+    "data": {
+        "type": "rental",
+        "data": {
+            "id": 3,
+            "user_id": 1,
+            "personal_name": "نادية أحمد",
+            "rental_type": "scooter_with_driver",
+            "status": "pending"
+        }
+    }
+}
+```
+
+---
+
+### 3. إعادة طلب توصيل (Reorder Delivery)
+
+```
+POST /v1/reorder/delivery/{id}
+```
+
+**Parameters:**
+- `:id` - معرف طلب التوصيل القديم (required)
+
+**Body (JSON - اختياري تماماً):**
+```json
+{
+    "payment_method": "apple_pay"
+}
+```
+
+**مثال متقدم (مع تعديلات):**
+```json
+{
+    "shipment_details": "صندوق جديد",
+    "sender_lat": 24.7136,
+    "sender_lng": 46.6753,
+    "recipient_lat": 24.7200,
+    "recipient_lng": 46.6800,
+    "payment_method": "apple_pay"
+}
+```
+
+**الحقول:**
+- `shipment_details`: وصف الشحنة (اختياري)
+- `sender_address`: عنوان المرسل (اختياري)
+- `sender_lat`, `sender_lng`: إحداثيات المرسل (اختياري)
+- `sender_phone`: هاتف المرسل (اختياري)
+- `recipient_address`: عنوان المستقبل (اختياري)
+- `recipient_lat`, `recipient_lng`: إحداثيات المستقبل (اختياري)
+- `recipient_phone`: هاتف المستقبل (اختياري)
+- `payment_method`: طريقة الدفع (اختياري)
+
+**Response:**
+```json
+{
+    "success": true,
+    "message": "تم إعادة طلب التوصيل بنجاح",
+    "data": {
+        "type": "delivery",
+        "data": {
+            "id": 2,
+            "user_id": 1,
+            "order_number": "DEL-XYZ789",
+            "shipment_details": "صندوق جديد",
+            "delivery_cost": 15,
+            "status": "pending"
+        }
+    }
+}
+```
+
+---
+
+### 4. إعادة موعد غسيل سيارة (Reorder Car Wash)
+
+```
+POST /v1/reorder/car_wash/{id}
+```
+
+**Parameters:**
+- `:id` - معرف موعد الغسيل القديم (required)
+
+**Body (JSON - اختياري تماماً):**
+```json
+{}
+```
+
+**مثال متقدم (مع تعديلات):**
+```json
+{
+    "car_size": "large",
+    "wash_type": "interior_exterior",
+    "location_id": 2
+}
+```
+
+**الحقول:**
+- `car_size`: حجم السيارة (اختياري: small, large)
+- `wash_type`: نوع الغسيل (اختياري: exterior, interior, interior_exterior)
+- `scheduled_date`: تاريخ الموعد (اختياري)
+- `scheduled_time`: وقت الموعد بصيغة HH:mm (اختياري)
+- `time_period`: الفترة الزمنية (اختياري: before_lunch, early_evening, dinner_time, late_night)
+- `location_id`: معرف الموقع (اختياري)
+
+**Response:**
+```json
+{
+    "success": true,
+    "message": "تم إعادة موعد الغسيل بنجاح",
+    "data": {
+        "type": "car_wash",
+        "data": {
+            "id": 1,
+            "user_id": 1,
+            "car_size": "large",
+            "wash_type": "interior_exterior",
+            "scheduled_date": "2026-01-25",
+            "cost": 100,
+            "status": "pending",
+            "location": {...}
+        }
+    }
+}
+```
+
+---
+
+## ملاحظات مهمة حول Reorder
+
+### شروط الإعادة:
+- ✅ يجب أن يكون الطلب في حالة `completed` أو `in_progress`
+- ❌ لا يمكن إعادة الطلبات في حالة `pending` أو `cancelled`
+- ✅ جميع البيانات الأساسية تُنسخ من الطلب القديم
+- ✅ يمكن تعديل أي بيانات أثناء الإعادة
+
+### التاريخ والوقت الديناميكي:
+- ✅ إذا لم تُرسل `scheduled_at` أو `scheduled_date`، سيتم تحديده تلقائياً
+- ✅ التاريخ والوقت يتحدثان بناءً على التاريخ الحالي للنظام
+- ✅ يمكنك إرسال تاريخ مخصص إذا أردت موعد مختلف
+
+### الفروقات مع Create:
+| الميزة | Create | Reorder |
+|------|--------|---------|
+| نسخ البيانات | ❌ | ✅ |
+| يتطلب بيانات كاملة | ✅ | ❌ (اختياري) |
+| يتطلب معرف قديم | ❌ | ✅ |
+| الحالة الأولية | pending | pending |
+
+---
+
 ## حالات الطلبات (Status)
+
 
 ### الطلبات (Orders)
 - `pending`: قيد الانتظار
