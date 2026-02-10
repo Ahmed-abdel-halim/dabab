@@ -11,12 +11,21 @@ use App\Http\Controllers\V1\RatingController;
 use App\Http\Controllers\V1\AddressController;
 use App\Http\Controllers\V1\AllOrdersController;
 use App\Http\Controllers\V1\ReorderController;
+use App\Http\Controllers\V1\PaymentController;
+use App\Http\Controllers\V1\WalletController;
+use App\Http\Controllers\V1\InfoController;
 
 // Public Routes
 Route::post('v1/send-otp', [AuthController::class, 'sendVerificationCode']);
 Route::post('v1/verify-otp', [AuthController::class, 'verifyRegistrationCode']);
 Route::post('v1/complete-profile', [AuthController::class, 'completeRegistration']);
 Route::post('v1/login', [AuthController::class, 'login']);
+
+// Info Routes
+Route::get('v1/faqs', [InfoController::class, 'getFaqs']);
+Route::get('v1/privacy-policy', [InfoController::class, 'getPrivacyPolicy']);
+Route::get('v1/terms-and-conditions', [InfoController::class, 'getTermsAndConditions']);
+Route::get('v1/pages/{slug}', [InfoController::class, 'getPage']);
 
 // Protected Routes
 Route::middleware('auth:sanctum')->group(function () {
@@ -25,6 +34,7 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::post('v1/complete-location', [AuthController::class, 'completeLocation']);
     Route::get('v1/mylocation', [AuthController::class, 'getLocation']);
     Route::get('v1/profile', [AuthController::class, 'profile']);
+    Route::post('v1/update-locale', [AuthController::class, 'updateLocale']);
 
     // Reorder Route - واحد لكل الخدمات
     Route::post('v1/reorder/{type}/{id}', [ReorderController::class, 'reorder']);
@@ -89,4 +99,20 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::get('v1/all-orders', [AllOrdersController::class, 'getAllOrders']);
     Route::put('v1/all-orders/{type}/{id}', [AllOrdersController::class, 'updateService']);
     Route::delete('v1/all-orders/{type}/{id}', [AllOrdersController::class, 'deleteService']);
+
+    // Payment & Cards Routes
+    Route::get('v1/payment-methods', [PaymentController::class, 'getPaymentMethods']);
+    Route::post('v1/payment/apple-pay', [PaymentController::class, 'processApplePay']);
+    Route::prefix('v1/cards')->group(function () {
+        Route::get('/', [PaymentController::class, 'getCards']);
+        Route::post('/', [PaymentController::class, 'storeCard']);
+        Route::delete('/{id}', [PaymentController::class, 'destroyCard']);
+    });
+
+    // Wallet Routes
+    Route::prefix('v1/wallet')->group(function () {
+        Route::get('/balance', [WalletController::class, 'getBalance']);
+        Route::post('/charge', [WalletController::class, 'chargeWallet']);
+        Route::get('/transactions', [WalletController::class, 'getTransactions']);
+    });
 });

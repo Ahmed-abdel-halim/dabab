@@ -16,11 +16,16 @@ class SetLocale
      */
     public function handle(Request $request, Closure $next): Response
     {
-        // Get locale from query parameter (priority)
-        $locale = $request->query('lang');
+        // Get locale from input (query or body) - priority 1
+        $locale = $request->input('lang');
         
-        // If not in query, check Accept-Language header
+        // If not in input, check custom header 'lang' - priority 2
         if (!$locale) {
+            $locale = $request->header('lang');
+        }
+
+        // If not in custom header, check Accept-Language header - priority 3
+        if (!$locale && $request->header('Accept-Language')) {
             $locale = $request->getPreferredLanguage(['ar', 'en']);
         }
         
@@ -29,7 +34,7 @@ class SetLocale
             $locale = $request->session()->get('locale');
         }
         
-        // Validate locale and set default
+        // Validate locale or fall back to default
         $supportedLocales = ['ar', 'en'];
         if (!$locale || !in_array($locale, $supportedLocales)) {
             $locale = config('app.locale', 'en');

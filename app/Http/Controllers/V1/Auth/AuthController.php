@@ -200,11 +200,18 @@ class AuthController extends Controller
         return $this->successResponse($location, __('messages.auth.location_updated'));
     }
 
-    public function getLocation(Request $request)
+    public function updateLocale(Request $request)
     {
+        $request->validate([
+            'locale' => 'required|in:ar,en',
+        ]);
+
+        $user = $request->user();
+        $user->update(['locale' => $request->locale]);
+
         return $this->successResponse(
-            $request->user()->location,
-            __('messages.auth.location_loaded')
+            ['locale' => $user->locale],
+            __('messages.auth.locale_updated')
         );
     }
 }

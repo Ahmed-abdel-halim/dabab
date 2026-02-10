@@ -35,4 +35,10 @@ return [
         ],
     ],
 
+    'moyasar' => [
+        'api_id' => env('MOYASAR_API_ID'),
+        'secret_key' => env('MOYASAR_SECRET_KEY'),
+        'merchant_id' => env('APPLE_PAY_MERCHANT_ID'),
+    ],
+
 ];
