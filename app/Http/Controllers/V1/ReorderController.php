@@ -19,8 +19,6 @@ class ReorderController extends Controller
 
     /**
      * إعادة طلب من أي خدمة
-     * POST /v1/reorder/{type}/{id}
-     * type من الـ URL: order|rental|delivery|car_wash
      */
     public function reorder(Request $request, $type, $id)
     {
@@ -35,9 +33,6 @@ class ReorderController extends Controller
         };
     }
 
-    /**
-     * إعادة طلب (Orders)
-     */
     private function reorderOrder(Request $request, $id)
     {
         $oldOrder = Order::where('user_id', $request->user()->id)
@@ -95,9 +90,6 @@ class ReorderController extends Controller
         );
     }
 
-    /**
-     * إعادة طلب (Rental)
-     */
     private function reorderRental(Request $request, $id)
     {
         $oldRental = Rental::where('user_id', $request->user()->id)
@@ -149,13 +141,10 @@ class ReorderController extends Controller
             if (isset($filePath) && $filePath) {
                 Storage::disk('public')->delete($filePath);
             }
-            return $this->errorResponse(__('messages.rental.reorder_error') . ': ' . $e->getMessage(), 500);
+            return $this->errorResponse(__('messages.rental.reorder_error'), 500);
         }
     }
 
-    /**
-     * إعادة طلب (Delivery)
-     */
     private function reorderDelivery(Request $request, $id)
     {
         $oldDelivery = Delivery::where('user_id', $request->user()->id)
@@ -211,16 +200,8 @@ class ReorderController extends Controller
         );
     }
 
-    /**
-     * إعادة طلب (Car Wash)
-     */
     private function reorderCarWash(Request $request, $id)
     {
-        $locale = $request->query('lang', app()->getLocale());
-        if (in_array($locale, ['ar', 'en'])) {
-            app()->setLocale($locale);
-        }
-
         $oldCarWash = CarWash::where('user_id', $request->user()->id)
             ->with('location')
             ->findOrFail($id);
@@ -263,9 +244,6 @@ class ReorderController extends Controller
         );
     }
 
-    /**
-     * حساب تكلفة التوصيل بناءً على المسافة
-     */
     private function calculateDeliveryCost($lat1, $lng1, $lat2, $lng2)
     {
         $earthRadius = 6371; // km
@@ -282,9 +260,6 @@ class ReorderController extends Controller
         return max(5, round(5 + ($distance * 2), 2));
     }
 
-    /**
-     * حساب تكلفة غسيل السيارة
-     */
     private function calculateCarWashCost($carSize, $washType)
     {
         $baseCosts = [

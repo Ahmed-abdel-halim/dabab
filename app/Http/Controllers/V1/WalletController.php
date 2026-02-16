@@ -10,20 +10,18 @@ use Illuminate\Support\Facades\Validator;
 use Illuminate\Support\Facades\DB;
 
 use App\Http\Resources\WalletTransactionResource;
+use App\Traits\ApiResponseTrait;
 
 class WalletController extends Controller
 {
+    use ApiResponseTrait;
+
     public function getBalance(Request $request)
     {
-        $currency = app()->getLocale() === 'ar' ? 'ريال' : 'SAR';
-        
-        return response()->json([
-            'status' => 'success',
-            'data' => [
-                'balance' => $request->user()->wallet_balance,
-                'currency' => $currency,
-            ]
-        ]);
+        return $this->successResponse([
+            'balance' => $request->user()->wallet_balance,
+            'currency' => __('messages.wallet.currency'),
+        ], __('messages.wallet.balance_loaded'));
     }
 
     public function chargeWallet(Request $request)
@@ -34,10 +32,7 @@ class WalletController extends Controller
         ]);
 
         if ($validator->fails()) {
-            return response()->json([
-                'status' => 'error',
-                'message' => $validator->errors()->first()
-            ], 422);
+            return $this->errorResponse($validator->errors()->first(), 422);
         }
 
         DB::beginTransaction();
@@ -61,20 +56,13 @@ class WalletController extends Controller
 
             DB::commit();
 
-            return response()->json([
-                'status' => 'success',
-                'message' => 'Wallet charged successfully',
-                'data' => [
-                    'new_balance' => $user->wallet_balance,
-                    'transaction' => new WalletTransactionResource($transaction)
-                ]
-            ]);
+            return $this->successResponse([
+                'new_balance' => $user->wallet_balance,
+                'transaction' => new WalletTransactionResource($transaction)
+            ], __('messages.wallet.charge_success'));
         } catch (\Exception $e) {
             DB::rollBack();
-            return response()->json([
-                'status' => 'error',
-                'message' => 'Failed to charge wallet'
-            ], 500);
+            return $this->errorResponse(__('messages.wallet.charge_failed'), 500);
         }
     }
 
@@ -84,9 +72,6 @@ class WalletController extends Controller
             ->orderBy('created_at', 'desc')
             ->get();
 
-        return response()->json([
-            'status' => 'success',
-            'data' => WalletTransactionResource::collection($transactions)
-        ]);
+        return $this->successResponse(WalletTransactionResource::collection($transactions), __('messages.wallet.transactions_loaded'));
     }
 }

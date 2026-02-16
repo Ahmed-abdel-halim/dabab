@@ -10,19 +10,19 @@ use App\Models\Page;
 
 use App\Http\Resources\FaqResource;
 use App\Http\Resources\PageResource;
+use App\Traits\ApiResponseTrait;
 
 class InfoController extends Controller
 {
+    use ApiResponseTrait;
+
     public function getFaqs()
     {
         $faqs = Faq::where('is_active', true)
             ->orderBy('sort_order')
             ->get();
 
-        return response()->json([
-            'status' => 'success',
-            'data' => FaqResource::collection($faqs)
-        ]);
+        return $this->successResponse(FaqResource::collection($faqs));
     }
 
     public function getPrivacyPolicy()
@@ -30,16 +30,10 @@ class InfoController extends Controller
         $page = Page::where('slug', 'privacy-policy')->first();
 
         if (!$page) {
-            return response()->json([
-                'status' => 'error',
-                'message' => app()->getLocale() === 'ar' ? 'سياسة الخصوصية غير موجودة' : 'Privacy Policy not found'
-            ], 404);
+            return $this->errorResponse(__('messages.info.privacy_policy_not_found'), 404);
         }
 
-        return response()->json([
-            'status' => 'success',
-            'data' => new PageResource($page)
-        ]);
+        return $this->successResponse(new PageResource($page));
     }
 
     public function getTermsAndConditions()
@@ -47,16 +41,10 @@ class InfoController extends Controller
         $page = Page::where('slug', 'terms-and-conditions')->first();
 
         if (!$page) {
-            return response()->json([
-                'status' => 'error',
-                'message' => app()->getLocale() === 'ar' ? 'الشروط والأحكام غير موجودة' : 'Terms and Conditions not found'
-            ], 404);
+            return $this->errorResponse(__('messages.info.terms_not_found'), 404);
         }
 
-        return response()->json([
-            'status' => 'success',
-            'data' => new PageResource($page)
-        ]);
+        return $this->successResponse(new PageResource($page));
     }
 
     public function getPage($slug)
@@ -64,15 +52,9 @@ class InfoController extends Controller
         $page = Page::where('slug', $slug)->first();
 
         if (!$page) {
-            return response()->json([
-                'status' => 'error',
-                'message' => app()->getLocale() === 'ar' ? 'الصفحة غير موجودة' : 'Page not found'
-            ], 404);
+            return $this->errorResponse(__('messages.info.page_not_found'), 404);
         }
 
-        return response()->json([
-            'status' => 'success',
-            'data' => new PageResource($page)
-        ]);
+        return $this->successResponse(new PageResource($page));
     }
 }

@@ -47,11 +47,10 @@ class RentalController extends Controller
 
             return $this->successResponse($rental, __('messages.rental.created'));
         } catch (\Exception $e) {
-            // في حالة حدوث خطأ، احذف الملف إذا تم رفعه
             if (isset($filePath) && $filePath) {
                 Storage::disk('public')->delete($filePath);
             }
-            return $this->errorResponse(__('messages.rental.create_error') . ': ' . $e->getMessage(), 500);
+            return $this->errorResponse(__('messages.rental.create_error'), 500);
         }
     }
 
@@ -71,6 +70,4 @@ class RentalController extends Controller
 
         return $this->successResponse($rental, __('messages.rental.loaded'));
     }
-
 }
-

@@ -13,9 +13,12 @@ use Illuminate\Support\Facades\Validator;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Cache;
+use App\Traits\ApiResponseTrait;
 
 class DeliveryAgentRegistrationController extends Controller
 {
+    use ApiResponseTrait;
+
     /**
      * Get registration data from cache
      */
@@ -48,19 +51,12 @@ class DeliveryAgentRegistrationController extends Controller
         ]);
 
         if ($validator->fails()) {
-            return response()->json([
-                'success' => false,
-                'message' => __('messages.validation_error'),
-                'errors' => $validator->errors()
-            ], 422);
+            return $this->errorResponse($validator->errors()->first(), 422);
         }
 
         $data = $this->getRegistrationData($request->temp_token);
         if (!$data) {
-            return response()->json([
-                'success' => false,
-                'message' => __('messages.auth.registration_token_invalid'),
-            ], 422);
+            return $this->errorResponse(__('messages.auth.registration_token_invalid'), 422);
         }
 
         // Handle profile photo upload
@@ -80,13 +76,9 @@ class DeliveryAgentRegistrationController extends Controller
 
         $this->storeRegistrationData($request->temp_token, $data);
 
-        return response()->json([
-            'success' => true,
-            'message' => __('messages.delivery_agent.personal_details_saved'),
-            'data' => [
-                'next_step' => 'vehicle_details'
-            ]
-        ], 200);
+        return $this->successResponse([
+            'next_step' => 'vehicle_details'
+        ], __('messages.delivery_agent.personal_details_saved'));
     }
 
     /**
@@ -117,19 +109,12 @@ class DeliveryAgentRegistrationController extends Controller
         ]);
 
         if ($validator->fails()) {
-            return response()->json([
-                'success' => false,
-                'message' => __('messages.validation_error'),
-                'errors' => $validator->errors()
-            ], 422);
+            return $this->errorResponse($validator->errors()->first(), 422);
         }
 
         $data = $this->getRegistrationData($request->temp_token);
         if (!$data) {
-            return response()->json([
-                'success' => false,
-                'message' => __('messages.auth.registration_token_invalid'),
-            ], 422);
+            return $this->errorResponse(__('messages.auth.registration_token_invalid'), 422);
         }
 
         // Save Vehicle Data
@@ -163,13 +148,9 @@ class DeliveryAgentRegistrationController extends Controller
 
         $this->storeRegistrationData($request->temp_token, $data);
 
-        return response()->json([
-            'success' => true,
-            'message' => __('messages.delivery_agent.vehicle_details_saved'),
-            'data' => [
-                'next_step' => 'bank_details'
-            ]
-        ], 200);
+        return $this->successResponse([
+            'next_step' => 'bank_details'
+        ], __('messages.delivery_agent.vehicle_details_saved'));
     }
 
     /**
@@ -185,27 +166,17 @@ class DeliveryAgentRegistrationController extends Controller
         ]);
 
         if ($validator->fails()) {
-            return response()->json([
-                'success' => false,
-                'message' => __('messages.validation_error'),
-                'errors' => $validator->errors()
-            ], 422);
+            return $this->errorResponse($validator->errors()->first(), 422);
         }
 
         $data = $this->getRegistrationData($request->temp_token);
         if (!$data || !isset($data['personal_details'])) {
-            return response()->json([
-                'success' => false,
-                'message' => __('messages.auth.registration_token_invalid'),
-            ], 422);
+            return $this->errorResponse(__('messages.auth.registration_token_invalid'), 422);
         }
 
         // Check if previous steps exist in cache
         if (!isset($data['vehicle_details']) || !isset($data['documents'])) {
-            return response()->json([
-                'success' => false,
-                'message' => 'Please complete previous registration steps first.',
-            ], 422);
+            return $this->errorResponse(__('messages.delivery_agent.complete_previous_steps'), 422);
         }
 
         try {
@@ -275,24 +246,16 @@ class DeliveryAgentRegistrationController extends Controller
             // Generate token for the new user
             $token = $user->createToken('auth')->plainTextToken;
 
-            return response()->json([
-                'success' => true,
-                'message' => __('messages.delivery_agent.profile_created'),
-                'data' => [
-                    'user' => $user,
-                    'profile' => $profile,
-                    'token' => $token,
-                    'status' => $profile->status,
-                ]
-            ], 201);
+            return $this->successResponse([
+                'user' => $user,
+                'profile' => $profile,
+                'token' => $token,
+                'status' => $profile->status,
+            ], __('messages.delivery_agent.profile_created'), 201);
 
         } catch (\Exception $e) {
             DB::rollBack();
-            return response()->json([
-                'success' => false,
-                'message' => __('messages.error_occurred'),
-                'error' => $e->getMessage()
-            ], 500);
+            return $this->errorResponse(__('messages.error_occurred'), 500);
         }
     }
 
@@ -305,19 +268,13 @@ class DeliveryAgentRegistrationController extends Controller
             $user = auth()->user();
             
             if (!$user || $user->role !== 'delivery_agent') {
-                return response()->json([
-                    'success' => false,
-                    'message' => __('messages.delivery_agent.not_delivery_agent'),
-                ], 403);
+                return $this->errorResponse(__('messages.delivery_agent.not_delivery_agent'), 403);
             }
 
             $profile = $user->deliveryAgentProfile()->with(['vehicle', 'bankDetails', 'documents'])->first();
 
             if (!$profile) {
-                return response()->json([
-                    'success' => false,
-                    'message' => __('messages.delivery_agent.profile_not_found'),
-                ], 404);
+                return $this->errorResponse(__('messages.delivery_agent.profile_not_found'), 404);
             }
 
             // Map full URLs for profile photo and documents
@@ -331,22 +288,15 @@ class DeliveryAgentRegistrationController extends Controller
                 }
             }
 
-            return response()->json([
-                'success' => true,
-                'data' => [
-                    'user' => $user,
-                    'profile' => $profile,
-                    'status' => $profile->status,
-                    'admin_comment' => $profile->admin_comment,
-                ]
-            ], 200);
+            return $this->successResponse([
+                'user' => $user,
+                'profile' => $profile,
+                'status' => $profile->status,
+                'admin_comment' => $profile->admin_comment,
+            ]);
 
         } catch (\Exception $e) {
-            return response()->json([
-                'success' => false,
-                'message' => __('messages.error_occurred'),
-                'error' => $e->getMessage()
-            ], 500);
+            return $this->errorResponse(__('messages.error_occurred'), 500);
         }
     }
 }

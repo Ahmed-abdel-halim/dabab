@@ -20,25 +20,18 @@ class AllOrdersController extends Controller
 
     public function getAllOrders(Request $request)
     {
-        // التأكد من تعيين اللغة من query parameter
-        $locale = $request->query('lang', app()->getLocale());
-        if (in_array($locale, ['ar', 'en'])) {
-            app()->setLocale($locale);
-        }
-
         $status = $request->query('status', 'all'); // all, pending, completed, cancelled
         $userId = $request->user()->id;
 
         $allOrders = [];
 
-        // 1. Orders (الطلبات)
+        // 1. Orders
         $ordersQuery = Order::where('user_id', $userId)
             ->with(['location', 'items.category']);
         
         if ($status !== 'all') {
             $mappedStatus = $this->mapStatusForOrders($status);
             if ($status === 'pending') {
-                // pending يشمل: pending, confirmed, in_progress
                 $ordersQuery->whereIn('status', ['pending', 'confirmed', 'in_progress']);
             } else {
                 $ordersQuery->where('status', $mappedStatus);
@@ -50,10 +43,10 @@ class AllOrdersController extends Controller
             $allOrders[] = [
                 'id' => $order->id,
                 'type' => 'order',
-                'type_name' => $locale === 'ar' ? 'طلب' : 'Order',
+                'type_name' => __('messages.order.type_order'),
                 'order_number' => $order->order_number,
                 'status' => $this->normalizeStatus($order->status, 'order'),
-                'status_display' => $this->getStatusDisplay($order->status, 'order', $locale),
+                'status_display' => __('messages.order.status_' . $order->status),
                 'total_cost' => (float) $order->total_cost,
                 'delivery_cost' => (float) $order->delivery_cost,
                 'payment_method' => $order->payment_method,
@@ -66,13 +59,12 @@ class AllOrdersController extends Controller
             ];
         }
 
-        // 2. Deliveries (التوصيل)
+        // 2. Deliveries
         $deliveriesQuery = Delivery::where('user_id', $userId);
         
         if ($status !== 'all') {
             $mappedStatus = $this->mapStatusForDeliveries($status);
             if ($status === 'pending') {
-                // pending يشمل: pending, in_progress
                 $deliveriesQuery->whereIn('status', ['pending', 'in_progress']);
             } else {
                 $deliveriesQuery->where('status', $mappedStatus);
@@ -84,10 +76,10 @@ class AllOrdersController extends Controller
             $allOrders[] = [
                 'id' => $delivery->id,
                 'type' => 'delivery',
-                'type_name' => $locale === 'ar' ? 'توصيل' : 'Delivery',
+                'type_name' => __('messages.order.type_delivery'),
                 'order_number' => $delivery->order_number,
                 'status' => $this->normalizeStatus($delivery->status, 'delivery'),
-                'status_display' => $this->getStatusDisplay($delivery->status, 'delivery', $locale),
+                'status_display' => __('messages.order.status_' . $delivery->status),
                 'shipment_details' => $delivery->shipment_details,
                 'sender_address' => $delivery->sender_address,
                 'recipient_address' => $delivery->recipient_address,
@@ -99,7 +91,7 @@ class AllOrdersController extends Controller
             ];
         }
 
-        // 3. Rentals (الاستئجار)
+        // 3. Rentals
         $rentalsQuery = Rental::where('user_id', $userId);
         
         if ($status !== 'all') {
@@ -111,10 +103,10 @@ class AllOrdersController extends Controller
             $allOrders[] = [
                 'id' => $rental->id,
                 'type' => 'rental',
-                'type_name' => $locale === 'ar' ? 'استئجار' : 'Rental',
+                'type_name' => __('messages.order.type_rental'),
                 'order_number' => null,
                 'status' => $this->normalizeStatus($rental->status, 'rental'),
-                'status_display' => $this->getStatusDisplay($rental->status, 'rental', $locale),
+                'status_display' => __('messages.order.status_' . $rental->status),
                 'personal_name' => $rental->personal_name,
                 'commercial_name' => $rental->commercial_name,
                 'store_type' => $rental->store_type,
@@ -126,14 +118,13 @@ class AllOrdersController extends Controller
             ];
         }
 
-        // 4. Car Washes (غسيل السيارات)
+        // 4. Car Washes
         $carWashesQuery = CarWash::where('user_id', $userId)
             ->with('location');
         
         if ($status !== 'all') {
             $mappedStatus = $this->mapStatusForCarWashes($status);
             if ($status === 'pending') {
-                // pending يشمل: pending, confirmed
                 $carWashesQuery->whereIn('status', ['pending', 'confirmed']);
             } else {
                 $carWashesQuery->where('status', $mappedStatus);
@@ -145,10 +136,10 @@ class AllOrdersController extends Controller
             $allOrders[] = [
                 'id' => $carWash->id,
                 'type' => 'car_wash',
-                'type_name' => $locale === 'ar' ? 'غسيل سيارات' : 'Car Wash',
+                'type_name' => __('messages.order.type_car_wash'),
                 'order_number' => null,
                 'status' => $this->normalizeStatus($carWash->status, 'car_wash'),
-                'status_display' => $this->getStatusDisplay($carWash->status, 'car_wash', $locale),
+                'status_display' => __('messages.order.status_' . $carWash->status),
                 'car_size' => $carWash->car_size,
                 'wash_type' => $carWash->wash_type,
                 'scheduled_date' => $carWash->scheduled_date_formatted,
@@ -163,7 +154,7 @@ class AllOrdersController extends Controller
             ];
         }
 
-        // ترتيب حسب التاريخ (الأحدث أولاً)
+        // ترتيب حسب التاريخ
         usort($allOrders, function ($a, $b) {
             return strtotime($b['created_at']) - strtotime($a['created_at']);
         });
@@ -171,9 +162,6 @@ class AllOrdersController extends Controller
         return $this->successResponse($allOrders, __('messages.order.all_orders_loaded'));
     }
 
-    /**
-     * تحويل status من Rental إلى status موحد
-     */
     private function mapStatusForRentals($status)
     {
         $mapping = [
@@ -184,57 +172,30 @@ class AllOrdersController extends Controller
         return $mapping[$status] ?? $status;
     }
 
-    /**
-     * تحويل status من Order إلى status موحد
-     */
     private function mapStatusForOrders($status)
     {
-        // Orders: pending, confirmed, in_progress, completed, cancelled
-        if ($status === 'pending') {
-            return 'pending';
-        } elseif ($status === 'completed') {
-            return 'completed';
-        } elseif ($status === 'cancelled') {
-            return 'cancelled';
-        }
+        if ($status === 'pending') return 'pending';
+        if ($status === 'completed') return 'completed';
+        if ($status === 'cancelled') return 'cancelled';
         return $status;
     }
 
-    /**
-     * تحويل status من Delivery إلى status موحد
-     */
     private function mapStatusForDeliveries($status)
     {
-        // Deliveries: pending, in_progress, completed, cancelled
-        if ($status === 'pending') {
-            return 'pending';
-        } elseif ($status === 'completed') {
-            return 'completed';
-        } elseif ($status === 'cancelled') {
-            return 'cancelled';
-        }
+        if ($status === 'pending') return 'pending';
+        if ($status === 'completed') return 'completed';
+        if ($status === 'cancelled') return 'cancelled';
         return $status;
     }
 
-    /**
-     * تحويل status من CarWash إلى status موحد
-     */
     private function mapStatusForCarWashes($status)
     {
-        // CarWashes: pending, confirmed, completed, cancelled
-        if ($status === 'pending') {
-            return 'pending';
-        } elseif ($status === 'completed') {
-            return 'completed';
-        } elseif ($status === 'cancelled') {
-            return 'cancelled';
-        }
+        if ($status === 'pending') return 'pending';
+        if ($status === 'completed') return 'completed';
+        if ($status === 'cancelled') return 'cancelled';
         return $status;
     }
 
-    /**
-     * توحيد status لجميع الخدمات
-     */
     private function normalizeStatus($status, $type)
     {
         if ($type === 'rental') {
@@ -246,7 +207,6 @@ class AllOrdersController extends Controller
             return $mapping[$status] ?? $status;
         }
         
-        // للأنواع الأخرى: pending, completed, cancelled
         if (in_array($status, ['pending', 'confirmed', 'in_progress'])) {
             return 'pending';
         } elseif ($status === 'completed') {
@@ -258,42 +218,8 @@ class AllOrdersController extends Controller
         return $status;
     }
 
-    /**
-     * الحصول على نص status بالعربية أو الإنجليزية
-     */
-    private function getStatusDisplay($status, $type, $locale)
-    {
-        if ($type === 'rental') {
-            $statuses = [
-                'pending' => ['ar' => 'قيد الانتظار', 'en' => 'Pending'],
-                'approved' => ['ar' => 'مكتمل', 'en' => 'Completed'],
-                'rejected' => ['ar' => 'ملغي', 'en' => 'Cancelled'],
-            ];
-        } else {
-            $statuses = [
-                'pending' => ['ar' => 'قيد الانتظار', 'en' => 'Pending'],
-                'confirmed' => ['ar' => 'مؤكد', 'en' => 'Confirmed'],
-                'in_progress' => ['ar' => 'قيد التنفيذ', 'en' => 'In Progress'],
-                'completed' => ['ar' => 'مكتمل', 'en' => 'Completed'],
-                'cancelled' => ['ar' => 'ملغي', 'en' => 'Cancelled'],
-            ];
-        }
-        
-        return $statuses[$status][$locale] ?? $status;
-    }
-
-    /**
-     * تعديل أي خدمة من الخدمات الأربع
-     * PUT /v1/all-orders/{type}/{id}
-     */
     public function updateService(Request $request, $type, $id)
     {
-        // التأكد من تعيين اللغة
-        $locale = $request->query('lang', app()->getLocale());
-        if (in_array($locale, ['ar', 'en'])) {
-            app()->setLocale($locale);
-        }
-
         $userId = $request->user()->id;
 
         switch ($type) {
@@ -310,18 +236,8 @@ class AllOrdersController extends Controller
         }
     }
 
-    /**
-     * حذف أي خدمة من الخدمات الأربع
-     * DELETE /v1/all-orders/{type}/{id}
-     */
     public function deleteService(Request $request, $type, $id)
     {
-        // التأكد من تعيين اللغة
-        $locale = $request->query('lang', app()->getLocale());
-        if (in_array($locale, ['ar', 'en'])) {
-            app()->setLocale($locale);
-        }
-
         $userId = $request->user()->id;
 
         switch ($type) {
@@ -337,8 +253,6 @@ class AllOrdersController extends Controller
                 return $this->errorResponse(__('messages.invalid_service_type'), 400);
         }
     }
-
-    // ========== Update Methods ==========
 
     private function updateOrder(Request $request, $id, $userId)
     {
@@ -366,15 +280,12 @@ class AllOrdersController extends Controller
             $updateData['payment_method'] = $request->payment_method;
         }
 
-        // إذا تم تحديث items
         if ($request->has('items')) {
-            // حذف items القديمة
             $order->items()->delete();
             
             $totalCost = 0;
             $deliveryCost = 0;
 
-            // إنشاء items جديدة
             foreach ($request->items as $index => $item) {
                 $category = OrderCategory::findOrFail($item['category_id']);
                 $itemDeliveryCost = $category->fixed_price ?? 5;
@@ -425,7 +336,6 @@ class AllOrdersController extends Controller
             'recipient_phone', 'payment_method'
         ]);
 
-        // إعادة حساب delivery_cost إذا تم تغيير الإحداثيات
         if (isset($request->sender_lat) && isset($request->sender_lng) &&
             isset($request->recipient_lat) && isset($request->recipient_lng)) {
             $updateData['delivery_cost'] = $this->calculateDeliveryCost(
@@ -462,7 +372,6 @@ class AllOrdersController extends Controller
             ]);
 
             if ($request->hasFile('commercial_registration_file')) {
-                // حذف الملف القديم
                 $oldFilePath = $rental->getOriginalFilePath();
                 if ($oldFilePath) {
                     Storage::disk('public')->delete($oldFilePath);
@@ -506,7 +415,6 @@ class AllOrdersController extends Controller
             'time_period', 'location_id'
         ]);
 
-        // إعادة حساب cost إذا تم تغيير car_size أو wash_type
         if ($request->has('car_size') || $request->has('wash_type')) {
             $carSize = $request->car_size ?? $carWash->car_size;
             $washType = $request->wash_type ?? $carWash->wash_type;
@@ -518,15 +426,12 @@ class AllOrdersController extends Controller
         return $this->successResponse($carWash->load('location'), __('messages.car_wash.updated'));
     }
 
-    // ========== Delete Methods (Cancel) ==========
-
     private function deleteOrder(Request $request, $id, $userId)
     {
         $order = Order::where('user_id', $userId)
             ->whereIn('status', ['pending', 'confirmed'])
             ->findOrFail($id);
 
-        // إلغاء الطلب (تغيير status إلى cancelled)
         $order->update(['status' => 'cancelled']);
 
         return $this->successResponse($order, __('messages.order.cancelled'));
@@ -538,7 +443,6 @@ class AllOrdersController extends Controller
             ->whereIn('status', ['pending', 'in_progress'])
             ->findOrFail($id);
 
-        // إلغاء التوصيل (تغيير status إلى cancelled)
         $delivery->update(['status' => 'cancelled']);
 
         return $this->successResponse($delivery, __('messages.delivery.cancelled'));
@@ -550,7 +454,6 @@ class AllOrdersController extends Controller
             ->where('status', 'pending')
             ->findOrFail($id);
 
-        // إلغاء الاستئجار (تغيير status إلى rejected)
         $rental->update(['status' => 'rejected']);
 
         return $this->successResponse($rental, __('messages.rental.cancelled'));
@@ -562,13 +465,10 @@ class AllOrdersController extends Controller
             ->whereIn('status', ['pending', 'confirmed'])
             ->findOrFail($id);
 
-        // إلغاء موعد الغسيل (تغيير status إلى cancelled)
         $carWash->update(['status' => 'cancelled']);
 
         return $this->successResponse($carWash, __('messages.car_wash.cancelled'));
     }
-
-    // ========== Helper Methods ==========
 
     private function calculateDeliveryCost($lat1, $lng1, $lat2, $lng2)
     {
@@ -605,4 +505,3 @@ class AllOrdersController extends Controller
         return $baseCosts[$carSize][$washType] ?? 50;
     }
 }
-

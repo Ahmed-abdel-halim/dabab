@@ -7,26 +7,26 @@ use Illuminate\Http\Request;
 
 use App\Models\PaymentCard;
 use Illuminate\Support\Facades\Validator;
+use App\Traits\ApiResponseTrait;
 
 class PaymentController extends Controller
 {
+    use ApiResponseTrait;
+
     public function getPaymentMethods(Request $request)
     {
         $cards = $request->user()->paymentCards()->get();
         
-        $locale = app()->getLocale();
-        $isAr = $locale === 'ar';
-
         $methods = [
             [
                 'id' => 'cash',
-                'name' => $isAr ? 'كاش' : 'Cash',
+                'name' => __('messages.payment.cash'),
                 'type' => 'cash',
                 'icon' => 'cash-icon-url',
             ],
             [
                 'id' => 'apple_pay',
-                'name' => $isAr ? 'أبل باي' : 'Apple Pay',
+                'name' => __('messages.payment.apple_pay'),
                 'type' => 'apple_pay',
                 'icon' => 'apple-pay-icon-url',
             ],
@@ -43,20 +43,14 @@ class PaymentController extends Controller
             ];
         }
 
-        return response()->json([
-            'status' => 'success',
-            'data' => $methods
-        ]);
+        return $this->successResponse($methods, __('messages.payment.methods_loaded'));
     }
 
     public function getCards(Request $request)
     {
         $cards = $request->user()->paymentCards()->get();
         
-        return response()->json([
-            'status' => 'success',
-            'data' => $cards
-        ]);
+        return $this->successResponse($cards);
     }
 
     public function storeCard(Request $request)
@@ -69,15 +63,9 @@ class PaymentController extends Controller
         ]);
 
         if ($validator->fails()) {
-            return response()->json([
-                'status' => 'error',
-                'message' => $validator->errors()->first()
-            ], 422);
+            return $this->errorResponse($validator->errors()->first(), 422);
         }
 
-        // In a real app, you'd tokenize this with a gateway. 
-        // For now, we store masked/dummy as per UI request "I am working on API"
-        
         $card = $request->user()->paymentCards()->create([
             'card_holder_name' => $request->card_holder_name,
             'card_number' => $request->card_number,
@@ -86,11 +74,7 @@ class PaymentController extends Controller
             'is_default' => !$request->user()->paymentCards()->exists(),
         ]);
 
-        return response()->json([
-            'status' => 'success',
-            'message' => app()->getLocale() === 'ar' ? 'تم إضافة البطاقة بنجاح' : 'Card added successfully',
-            'data' => $card
-        ]);
+        return $this->successResponse($card, __('messages.payment.card_added'), 201);
     }
 
     public function destroyCard(Request $request, $id)
@@ -98,18 +82,12 @@ class PaymentController extends Controller
         $card = $request->user()->paymentCards()->find($id);
         
         if (!$card) {
-            return response()->json([
-                'status' => 'error',
-                'message' => app()->getLocale() === 'ar' ? 'البطاقة غير موجودة' : 'Card not found'
-            ], 404);
+            return $this->errorResponse(__('messages.payment.card_not_found'), 404);
         }
 
         $card->delete();
 
-        return response()->json([
-            'status' => 'success',
-            'message' => app()->getLocale() === 'ar' ? 'تم حذف البطاقة بنجاح' : 'Card deleted successfully'
-        ]);
+        return $this->successResponse(null, __('messages.payment.card_deleted'));
     }
 
     public function processApplePay(Request $request)
@@ -121,45 +99,22 @@ class PaymentController extends Controller
         ]);
 
         if ($validator->fails()) {
-            return response()->json([
-                'status' => 'error',
-                'message' => $validator->errors()->first()
-            ], 422);
+            return $this->errorResponse($validator->errors()->first(), 422);
         }
 
         // Configuration from .env
-        $apiKey = config('services.moyasar.secret_key'); // or env('MOYASAR_SECRET_KEY')
+        $apiKey = config('services.moyasar.secret_key'); 
         
-        // This is a placeholder for the actual API call to the gateway
-        // In a real scenario, you'd use Guzzle or a Gateway SDK here
-        
-        /*
-        $response = Http::withBasicAuth($apiKey, '')->post('https://api.moyasar.com/v1/payments', [
-            'amount' => $request->amount * 100, // typically in cents/halalas
-            'currency' => 'SAR',
-            'description' => 'Payment for order ' . ($request->order_id ?? 'N/A'),
-            'source' => [
-                'type' => 'applepay',
-                'token' => $request->token
-            ]
-        ]);
-        */
-
         // Simple mock response for logic demonstration
         $isSuccessful = true; // Assume success for demo
 
         if ($isSuccessful) {
-            return response()->json([
-                'status' => 'success',
-                'message' => app()->getLocale() === 'ar' ? 'تمت عملية الدفع عبر أبل باي بنجاح' : 'Apple Pay payment processed successfully',
+            return $this->successResponse([
                 'transaction_id' => 'pay_' . uniqid()
-            ]);
+            ], __('messages.payment.apple_pay_success'));
         }
 
-        return response()->json([
-            'status' => 'error',
-            'message' => app()->getLocale() === 'ar' ? 'فشلت عملية الدفع عبر أبل باي' : 'Apple Pay payment failed'
-        ], 400);
+        return $this->errorResponse(__('messages.payment.apple_pay_failed'), 400);
     }
 
     private function detectCardBrand($number)
