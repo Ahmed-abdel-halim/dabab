@@ -173,6 +173,12 @@ class AuthController extends Controller
         );
     }
 
+    public function getLocation(Request $request)
+    {
+        $location = $request->user()->location;
+        return $this->successResponse($location, __('messages.auth.profile_loaded'));
+    }
+
     public function completeLocation(Request $request)
     {
         $request->validate([

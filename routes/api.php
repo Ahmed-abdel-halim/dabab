@@ -99,9 +99,11 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::get('v1/all-orders', [AllOrdersController::class, 'getAllOrders']);
 
     // Payment/Cards Routes
+    Route::get('v1/payment-methods', [PaymentController::class, 'getPaymentMethods']);
+    Route::post('v1/payment/apple-pay', [PaymentController::class, 'processApplePay']);
     Route::prefix('v1/cards')->group(function () {
-        Route::get('/', [PaymentController::class, 'getMyCards']);
-        Route::post('/', [PaymentController::class, 'addCard']);
+        Route::get('/', [PaymentController::class, 'getCards']);
+        Route::post('/', [PaymentController::class, 'storeCard']);
         Route::delete('/{id}', [PaymentController::class, 'destroyCard']);
     });
 
