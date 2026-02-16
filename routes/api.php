@@ -95,8 +95,10 @@ Route::middleware('auth:sanctum')->group(function () {
         Route::post('/', [RatingController::class, 'createRating']);
     });
 
-    // All Orders Route
+    // All Orders Routes
     Route::get('v1/all-orders', [AllOrdersController::class, 'getAllOrders']);
+    Route::put('v1/all-orders/{type}/{id}', [AllOrdersController::class, 'updateService']);
+    Route::delete('v1/all-orders/{type}/{id}', [AllOrdersController::class, 'deleteService']);
 
     // Payment/Cards Routes
     Route::get('v1/payment-methods', [PaymentController::class, 'getPaymentMethods']);
