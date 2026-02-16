@@ -30,15 +30,19 @@ trait ApiResponseTrait
 
         // if it's a collection or array
         if (is_iterable($data)) {
-            $firstItem = collect($data)->first();
-            // إذا كان array من arrays (مثل array الأيام)، استخدم 'data' كاسم
-            if (is_array($firstItem) && !is_object($firstItem)) {
+            $dataCollection = collect($data);
+            $firstItem = $dataCollection->first();
+
+            // إذا كانت مصفوفة بسيطة (associative array) أو مصفوفة من غير الكائنات
+            if (!is_object($firstItem)) {
                 return response()->json([
                     'status'  => true,
                     'message' => $message,
                     'data'    => $data
                 ], $code);
             }
+
+            // إذا كانت مصفوفة من الكائنات (Models)
             $resourceName = $this->resolveResourceName($firstItem);
             return response()->json([
                 'status'  => true,

@@ -9,41 +9,47 @@ use App\Traits\ApiResponseTrait;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\Hash;
+use Illuminate\Support\Facades\Mail;
+use App\Mail\OtpMail;
 
 class AuthController extends Controller
 {
     use ApiResponseTrait;
 
-    const STATIC_OTP = '1234';
-
     public function sendVerificationCode(Request $request)
     {
         $request->validate([
-            'phone' => 'required|string',
+            'email' => 'required|email',
             'type'  => 'nullable|in:registration,login',
         ]);
 
-        $phone = $request->phone;
+        $email = $request->email;
         $type  = $request->type ?? 'registration';
 
-        $user = User::where('phone', $phone)->first();
+        $user = User::where('email', $email)->first();
 
         if ($type === 'login' && !$user) {
-            return $this->errorResponse(__('messages.auth.phone_not_registered'), 404);
+            return $this->errorResponse(__('messages.auth.email_not_registered'), 404);
         }
 
         if ($type === 'registration' && $user) {
-            return $this->errorResponse(__('messages.auth.phone_already_registered'), 422);
+            return $this->errorResponse(__('messages.auth.email_already_registered'), 422);
         }
 
+        // Generate Random OTP (4 digits)
+        $otp = str_pad(random_int(0, 9999), 4, '0', STR_PAD_LEFT);
+
+        // Store OTP in cache
         Cache::put(
-            'otp_' . $phone . '_' . $type,
-            self::STATIC_OTP,
+            'otp_' . $email . '_' . $type,
+            $otp,
             now()->addMinutes(10)
         );
 
+        // Send OTP via email using Job for faster response
+        \App\Jobs\SendOtpJob::dispatch($email, $otp, $type);
+
         return $this->successResponse([
-            'otp' => self::STATIC_OTP,
             'expires_in' => 10
         ], __('messages.auth.verification_code_sent'));
     }
@@ -51,18 +57,18 @@ class AuthController extends Controller
     public function verifyRegistrationCode(Request $request)
     {
         $request->validate([
-            'phone' => 'required|string',
+            'email' => 'required|email',
             'code'  => 'required|string',
         ]);
 
-        $cachedOtp = Cache::get('otp_' . $request->phone . '_registration');
+        $cachedOtp = Cache::get('otp_' . $request->email . '_registration');
 
         if (!$cachedOtp || $cachedOtp !== $request->code) {
             return $this->errorResponse(__('messages.auth.verification_code_invalid'), 422);
         }
 
-        if (User::where('phone', $request->phone)->exists()) {
-            return $this->errorResponse(__('messages.auth.phone_already_registered'), 422);
+        if (User::where('email', $request->email)->exists()) {
+            return $this->errorResponse(__('messages.auth.email_already_registered'), 422);
         }
 
         $tempToken = bin2hex(random_bytes(32));
@@ -70,13 +76,13 @@ class AuthController extends Controller
         Cache::put(
             'registration_' . $tempToken,
             [
-                'phone' => $request->phone,
+                'email' => $request->email,
                 'verified_at' => now(),
             ],
             now()->addMinutes(30)
         );
 
-        Cache::forget('otp_' . $request->phone . '_registration');
+        Cache::forget('otp_' . $request->email . '_registration');
 
         return $this->successResponse([
             'temp_token' => $tempToken,
@@ -89,7 +95,7 @@ class AuthController extends Controller
         $request->validate([
             'temp_token' => 'required|string',
             'name'       => 'nullable|string|max:255',
-            'email'      => 'nullable|email|max:255|unique:users,email',
+            'phone'      => 'required|string|unique:users,phone',
         ]);
 
         $data = Cache::get('registration_' . $request->temp_token);
@@ -98,17 +104,19 @@ class AuthController extends Controller
             return $this->errorResponse(__('messages.auth.registration_token_invalid'), 422);
         }
 
-        if (User::where('phone', $data['phone'])->exists()) {
+        if (User::where('email', $data['email'])->exists()) {
             Cache::forget('registration_' . $request->temp_token);
+            return $this->errorResponse(__('messages.auth.email_already_registered'), 422);
+        }
+
+        if (User::where('phone', $request->phone)->exists()) {
             return $this->errorResponse(__('messages.auth.phone_already_registered'), 422);
         }
 
         $user = User::create([
-            'name'              => $request->name ?? __('messages.auth.default_user_name') . ' ' . substr($data['phone'], -4),
-            'email'             => $request->email ?? $data['phone'] . '@user.local',
-            'phone'             => $data['phone'],
-            'phone_verified_at' => $data['verified_at'],
-            'password'          => Hash::make(uniqid()),
+            'name'  => $request->name ?? __('messages.auth.default_user_name'),
+            'email' => $data['email'],
+            'phone' => $request->phone,
         ]);
 
         Cache::forget('registration_' . $request->temp_token);
@@ -124,25 +132,23 @@ class AuthController extends Controller
     public function login(Request $request)
     {
         $request->validate([
-            'phone' => 'required|string',
+            'email' => 'required|email',
             'code'  => 'required|string',
         ]);
 
-        $cachedOtp = Cache::get('otp_' . $request->phone . '_login');
+        $cachedOtp = Cache::get('otp_' . $request->email . '_login');
 
         if (!$cachedOtp || $cachedOtp !== $request->code) {
             return $this->errorResponse(__('messages.auth.verification_code_invalid'), 422);
         }
 
-        $user = User::where('phone', $request->phone)->first();
+        $user = User::where('email', $request->email)->first();
 
         if (!$user) {
-            return $this->errorResponse(__('messages.auth.phone_not_registered'), 404);
+            return $this->errorResponse(__('messages.auth.email_not_registered'), 404);
         }
 
-        Cache::forget('otp_' . $request->phone . '_login');
-
-        $user->update(['phone_verified_at' => now()]);
+        Cache::forget('otp_' . $request->email . '_login');
 
         $token = $user->createToken('auth')->plainTextToken;
 

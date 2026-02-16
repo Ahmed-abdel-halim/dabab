@@ -14,6 +14,7 @@ use App\Http\Controllers\V1\ReorderController;
 use App\Http\Controllers\V1\PaymentController;
 use App\Http\Controllers\V1\WalletController;
 use App\Http\Controllers\V1\InfoController;
+use App\Http\Controllers\V1\DeliveryAgent\DeliveryAgentRegistrationController;
 
 // Public Routes
 Route::post('v1/send-otp', [AuthController::class, 'sendVerificationCode']);
@@ -36,7 +37,7 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::get('v1/profile', [AuthController::class, 'profile']);
     Route::post('v1/update-locale', [AuthController::class, 'updateLocale']);
 
-    // Reorder Route - واحد لكل الخدمات
+    // Reorder Route
     Route::post('v1/reorder/{type}/{id}', [ReorderController::class, 'reorder']);
 
     // Address Routes
@@ -57,7 +58,6 @@ Route::middleware('auth:sanctum')->group(function () {
         Route::post('/{id}/cancel', [OrderController::class, 'cancelOrder']);
         Route::get('/{id}/track', [OrderController::class, 'trackOrder']);
         Route::post('/{id}/confirm', [OrderController::class, 'confirmOrder']);
-        // Routes for order items (sub-orders)
         Route::post('/{id}/items', [OrderController::class, 'addOrderItem']);
         Route::put('/{orderId}/items/{itemId}', [OrderController::class, 'updateOrderItem']);
         Route::delete('/{orderId}/items/{itemId}', [OrderController::class, 'deleteOrderItem']);
@@ -95,17 +95,13 @@ Route::middleware('auth:sanctum')->group(function () {
         Route::post('/', [RatingController::class, 'createRating']);
     });
 
-    // All Orders Route (جميع الطلبات من كل الخدمات)
+    // All Orders Route
     Route::get('v1/all-orders', [AllOrdersController::class, 'getAllOrders']);
-    Route::put('v1/all-orders/{type}/{id}', [AllOrdersController::class, 'updateService']);
-    Route::delete('v1/all-orders/{type}/{id}', [AllOrdersController::class, 'deleteService']);
 
-    // Payment & Cards Routes
-    Route::get('v1/payment-methods', [PaymentController::class, 'getPaymentMethods']);
-    Route::post('v1/payment/apple-pay', [PaymentController::class, 'processApplePay']);
+    // Payment/Cards Routes
     Route::prefix('v1/cards')->group(function () {
-        Route::get('/', [PaymentController::class, 'getCards']);
-        Route::post('/', [PaymentController::class, 'storeCard']);
+        Route::get('/', [PaymentController::class, 'getMyCards']);
+        Route::post('/', [PaymentController::class, 'addCard']);
         Route::delete('/{id}', [PaymentController::class, 'destroyCard']);
     });
 
@@ -113,6 +109,15 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::prefix('v1/wallet')->group(function () {
         Route::get('/balance', [WalletController::class, 'getBalance']);
         Route::post('/charge', [WalletController::class, 'chargeWallet']);
-        Route::get('/transactions', [WalletController::class, 'getTransactions']);
     });
+
+    // Delivery Agent Status Route (Authenticated users only)
+    Route::get('v1/delivery-agent/registration-status', [DeliveryAgentRegistrationController::class, 'getRegistrationStatus']);
+});
+
+// Delivery Agent Registration Steps (Guest with temp_token)
+Route::prefix('v1/delivery-agent')->group(function () {
+    Route::post('/complete-profile', [DeliveryAgentRegistrationController::class, 'completeDeliveryAgentProfile']);
+    Route::post('/register-vehicle', [DeliveryAgentRegistrationController::class, 'registerVehicleDetails']);
+    Route::post('/register-bank', [DeliveryAgentRegistrationController::class, 'registerBankDetails']);
 });

@@ -13,8 +13,7 @@ class User extends Authenticatable
     use HasApiTokens, HasFactory, Notifiable;
 
     protected $fillable = [
-        'name', 'phone', 'email', 'otp', 'otp_expires_at'
-
+        'name', 'phone', 'email', 'otp', 'otp_expires_at', 'role', 'profile_photo'
     ];
 
 
@@ -65,6 +64,11 @@ class User extends Authenticatable
     public function walletTransactions()
     {
         return $this->hasMany(WalletTransaction::class);
+    }
+
+    public function deliveryAgentProfile()
+    {
+        return $this->hasOne(DeliveryAgentProfile::class);
     }
 
 }
