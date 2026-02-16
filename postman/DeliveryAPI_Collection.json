@@ -263,6 +263,12 @@
                                     "description": "صحيفة الحالة الجنائية"
                                 },
                                 {
+                                    "key": "medical_check",
+                                    "type": "file",
+                                    "src": [],
+                                    "description": "الفحص الطبي أو شهادة اللياقة (خاص بالعجلة)"
+                                },
+                                {
                                     "key": "vehicle_insurance",
                                     "type": "file",
                                     "src": [],

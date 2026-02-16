@@ -27,7 +27,7 @@ return new class extends Migration
         Schema::create('delivery_vehicles', function (Blueprint $table) {
             $table->id();
             $table->foreignId('delivery_agent_profile_id')->constrained('delivery_agent_profiles')->onDelete('cascade');
-            $table->enum('vehicle_type', ['car', 'motorcycle', 'scooter', 'other'])->default('motorcycle');
+            $table->enum('vehicle_type', ['car', 'motorcycle', 'scooter', 'bicycle', 'other'])->default('motorcycle');
             $table->string('vehicle_brand')->nullable(); // e.g., Toyota, Honda
             $table->string('vehicle_model')->nullable(); // e.g., Corolla, CG125
             $table->string('manufacturing_year')->nullable();

@@ -96,7 +96,7 @@ class DeliveryAgentRegistrationController extends Controller
     {
         $validator = Validator::make($request->all(), [
             'temp_token' => 'required|string',
-            'vehicle_type' => 'required|in:car,motorcycle,scooter,other',
+            'vehicle_type' => 'required|in:car,motorcycle,scooter,bicycle,other',
             'vehicle_brand' => 'nullable|string|max:255',
             'vehicle_model' => 'nullable|string|max:255',
             'manufacturing_year' => 'nullable|string|max:4',
@@ -111,6 +111,7 @@ class DeliveryAgentRegistrationController extends Controller
             'vehicle_registration_front' => 'nullable|image|mimes:jpeg,png,jpg,pdf|max:10240',
             'vehicle_registration_back' => 'nullable|image|mimes:jpeg,png,jpg,pdf|max:10240',
             'criminal_record' => 'nullable|image|mimes:jpeg,png,jpg,pdf|max:10240',
+            'medical_check' => 'nullable|image|mimes:jpeg,png,jpg,pdf|max:10240',
             'vehicle_insurance' => 'nullable|image|mimes:jpeg,png,jpg,pdf|max:10240',
             'vehicle_photo' => 'nullable|image|mimes:jpeg,png,jpg,pdf|max:10240',
         ]);
@@ -150,7 +151,7 @@ class DeliveryAgentRegistrationController extends Controller
         $documents = [
             'id_front', 'id_back', 'driving_license', 
             'vehicle_registration_front', 'vehicle_registration_back', 
-            'criminal_record', 'vehicle_insurance', 'vehicle_photo'
+            'criminal_record', 'medical_check', 'vehicle_insurance', 'vehicle_photo'
         ];
 
         foreach ($documents as $doc) {
