@@ -95,26 +95,66 @@ class PaymentController extends Controller
         $validator = Validator::make($request->all(), [
             'token' => 'required', // The payment token from iOS
             'amount' => 'required|numeric|min:1',
-            'order_id' => 'nullable|string',
+            'order_id' => 'required|string',
+            'description' => 'nullable|string',
         ]);
 
         if ($validator->fails()) {
             return $this->errorResponse($validator->errors()->first(), 422);
         }
 
-        // Configuration from .env
-        $apiKey = config('services.moyasar.secret_key'); 
-        
-        // Simple mock response for logic demonstration
-        $isSuccessful = true; // Assume success for demo
+        $apiKey = config('services.moyasar.secret_key');
+        if (!$apiKey) {
+            return $this->errorResponse('Moyasar API key is not configured.', 500);
+        }
 
-        if ($isSuccessful) {
+        // وضع المحاكاة للاختبار إذا كان المفتاح افتراضياً (placeholder)
+        if (str_contains($apiKey, 'xxxxxx')) {
             return $this->successResponse([
-                'transaction_id' => 'pay_' . uniqid()
+                'transaction_id' => 'pay_mock_' . date('Ymd') . '_' . uniqid(),
+                'status' => 'paid',
+                'amount' => $request->amount,
+                'mode' => 'simulator'
             ], __('messages.payment.apple_pay_success'));
         }
 
-        return $this->errorResponse(__('messages.payment.apple_pay_failed'), 400);
+        try {
+            $client = new \GuzzleHttp\Client();
+            $response = $client->post('https://api.moyasar.com/v1/payments', [
+                'auth' => [$apiKey, ''],
+                'json' => [
+                    'amount' => $request->amount * 100, // Moyasar expects amount in halalas
+                    'currency' => 'SAR',
+                    'description' => $request->description ?? 'Order Payment #' . $request->order_id,
+                    'source' => [
+                        'type' => 'applepay',
+                        'token' => $request->token
+                    ],
+                    'metadata' => [
+                        'order_id' => $request->order_id,
+                        'user_id' => $request->user()->id
+                    ]
+                ]
+            ]);
+
+            $paymentData = json_decode($response->getBody()->getContents(), true);
+
+            if (isset($paymentData['status']) && $paymentData['status'] === 'paid') {
+                return $this->successResponse([
+                    'transaction_id' => $paymentData['id'],
+                    'status' => $paymentData['status'],
+                    'amount' => $paymentData['amount'] / 100,
+                ], __('messages.payment.apple_pay_success'));
+            }
+
+            return $this->errorResponse($paymentData['message'] ?? __('messages.payment.apple_pay_failed'), 400);
+
+        } catch (\GuzzleHttp\Exception\ClientException $e) {
+            $errorData = json_decode($e->getResponse()->getBody()->getContents(), true);
+            return $this->errorResponse($errorData['message'] ?? 'Payment failed', $e->getCode());
+        } catch (\Exception $e) {
+            return $this->errorResponse(__('messages.error_occurred'), 500);
+        }
     }
 
     private function detectCardBrand($number)
