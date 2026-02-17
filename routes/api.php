@@ -113,6 +113,7 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::prefix('v1/wallet')->group(function () {
         Route::get('/balance', [WalletController::class, 'getBalance']);
         Route::post('/charge', [WalletController::class, 'chargeWallet']);
+        Route::get('/transactions', [WalletController::class, 'getTransactions']);
     });
 
     // Delivery Agent Status Route (Authenticated users only)
