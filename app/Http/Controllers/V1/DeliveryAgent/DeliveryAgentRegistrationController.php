@@ -47,6 +47,7 @@ class DeliveryAgentRegistrationController extends Controller
             'nationality' => 'required|string|max:255',
             'national_id_number' => 'required|string|unique:delivery_agent_profiles,national_id_number',
             'birth_date' => 'required|date|before:today',
+            'working_service' => 'required|string|in:dabab_tawseel,car_wash',
             'profile_photo' => 'nullable|image|mimes:jpeg,png,jpg|max:5120',
         ]);
 
@@ -57,6 +58,12 @@ class DeliveryAgentRegistrationController extends Controller
         $data = $this->getRegistrationData($request->temp_token);
         if (!$data) {
             return $this->errorResponse(__('messages.auth.registration_token_invalid'), 422);
+        }
+
+        // Determine service category
+        $serviceCategory = 'tawseel';
+        if ($request->working_service === 'car_wash') {
+            $serviceCategory = 'car_wash';
         }
 
         // Handle profile photo upload
@@ -71,6 +78,8 @@ class DeliveryAgentRegistrationController extends Controller
             'nationality' => $request->nationality,
             'national_id_number' => $request->national_id_number,
             'birth_date' => $request->birth_date,
+            'working_service' => $request->working_service,
+            'service_category' => $serviceCategory,
             'profile_photo_path' => $profile_photo_path,
         ];
 
@@ -208,6 +217,8 @@ class DeliveryAgentRegistrationController extends Controller
                 'nationality' => $personal['nationality'],
                 'national_id_number' => $personal['national_id_number'],
                 'birth_date' => $personal['birth_date'],
+                'working_service' => $personal['working_service'],
+                'service_category' => $personal['service_category'],
                 'status' => 'documents_uploaded',
             ]);
 
@@ -288,11 +299,33 @@ class DeliveryAgentRegistrationController extends Controller
                 }
             }
 
+            // Add translated labels
+            if ($profile->working_service) {
+                $profile->working_service_label = __('messages.delivery_agent.services.' . $profile->working_service);
+            }
+            if ($profile->service_category) {
+                $profile->service_category_label = __('messages.delivery_agent.services.' . $profile->service_category);
+            }
+
+            // Determine dashboard services to show
+            $dashboardServices = [];
+            if ($profile->service_category === 'tawseel') {
+                $dashboardServices = [
+                    ['type' => 'delivery', 'label' => __('messages.services.tawseel')],
+                    ['type' => 'order', 'label' => __('messages.services.dabab_tawseel')],
+                ];
+            } elseif ($profile->service_category === 'car_wash') {
+                $dashboardServices = [
+                    ['type' => 'car_wash', 'label' => __('messages.services.car_wash')],
+                ];
+            }
+
             return $this->successResponse([
                 'user' => $user,
                 'profile' => $profile,
                 'status' => $profile->status,
                 'admin_comment' => $profile->admin_comment,
+                'dashboard_services' => $dashboardServices,
             ]);
 
         } catch (\Exception $e) {

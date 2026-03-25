@@ -22,6 +22,10 @@ class Delivery extends Model
         'delivery_cost',
         'payment_method',
         'payment_status',
+        'delivery_agent_id',
+        'item_photo',
+        'invoice_photo',
+        'delivered_at',
     ];
 
     protected $casts = [
@@ -30,7 +34,13 @@ class Delivery extends Model
         'recipient_lat' => 'decimal:7',
         'recipient_lng' => 'decimal:7',
         'delivery_cost' => 'decimal:2',
+        'delivered_at' => 'datetime',
     ];
+
+    public function agent()
+    {
+        return $this->belongsTo(User::class, 'delivery_agent_id');
+    }
 
     public function user()
     {

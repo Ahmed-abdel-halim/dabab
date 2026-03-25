@@ -140,19 +140,17 @@ class CarWashController extends Controller
 
     private function calculateCost($carSize, $washType)
     {
-        $baseCosts = [
-            'small' => [
-                'exterior' => 30,
-                'interior' => 40,
-                'interior_exterior' => 60,
-            ],
-            'large' => [
-                'exterior' => 50,
-                'interior' => 60,
-                'interior_exterior' => 100,
-            ],
+        $key = "car_wash_price_{$carSize}_{$washType}";
+        
+        $defaults = [
+            'small_exterior' => 30,
+            'small_interior' => 40,
+            'small_interior_exterior' => 60,
+            'large_exterior' => 50,
+            'large_interior' => 60,
+            'large_interior_exterior' => 100,
         ];
 
-        return $baseCosts[$carSize][$washType] ?? 50;
+        return \App\Models\SystemSetting::getValue($key, $defaults["{$carSize}_{$washType}"] ?? 50);
     }
 }

@@ -32,6 +32,11 @@ return [
         'status_approved' => 'Approved',
         'status_rejected' => 'Rejected',
         'complete_previous_steps' => 'Please complete previous registration steps first.',
+        'services' => [
+            'dabab_tawseel' => 'Dahbab Delivery',
+            'car_wash' => 'Car Wash',
+            'tawseel' => 'Delivery',
+        ],
     ],
     'order' => [
         'categories_loaded' => 'Categories loaded successfully.',

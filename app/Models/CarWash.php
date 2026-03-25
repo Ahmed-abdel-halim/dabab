@@ -18,12 +18,22 @@ class CarWash extends Model
         'cost',
         'payment_method',
         'payment_status',
+        'delivery_agent_id',
+        'item_photo',
+        'invoice_photo',
+        'delivered_at',
     ];
 
     protected $casts = [
         'scheduled_date' => 'date',
         'cost' => 'decimal:2',
+        'delivered_at' => 'datetime',
     ];
+
+    public function agent()
+    {
+        return $this->belongsTo(User::class, 'delivery_agent_id');
+    }
 
     protected $appends = [
         'scheduled_date_formatted',

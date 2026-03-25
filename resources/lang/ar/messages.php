@@ -32,6 +32,11 @@ return [
         'status_approved' => 'تم القبول',
         'status_rejected' => 'تم الرفض',
         'complete_previous_steps' => 'يرجى إكمال خطوات التسجيل السابقة أولاً.',
+        'services' => [
+            'dabab_tawseel' => 'دباب توصيل',
+            'car_wash' => 'غسيل',
+            'tawseel' => 'توصيل',
+        ],
     ],
     'order' => [
         'categories_loaded' => 'تم تحميل الفئات بنجاح.',

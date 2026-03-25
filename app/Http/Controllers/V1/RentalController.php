@@ -34,6 +34,8 @@ class RentalController extends Controller
                 }
             }
 
+            $cost = \App\Models\SystemSetting::getValue("rental_price_{$request->rental_type}", $request->rental_type === 'scooter_only' ? 150 : 250);
+
             $rental = Rental::create([
                 'user_id' => $request->user()->id,
                 'personal_name' => $request->personal_name,
@@ -43,6 +45,7 @@ class RentalController extends Controller
                 'commercial_registration_file' => $filePath,
                 'additional_details' => $request->additional_details,
                 'status' => 'pending',
+                'cost' => $cost,
             ]);
 
             return $this->successResponse($rental, __('messages.rental.created'));

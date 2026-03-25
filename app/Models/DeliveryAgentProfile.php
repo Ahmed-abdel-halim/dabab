@@ -11,6 +11,8 @@ class DeliveryAgentProfile extends Model
         'nationality',
         'national_id_number',
         'birth_date',
+        'working_service',
+        'service_category',
         'status',
         'admin_comment',
     ];

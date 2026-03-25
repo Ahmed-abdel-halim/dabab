@@ -1,0 +1,605 @@
+{
+  "info": {
+    "_postman_id": "1742d733-4663-436b-b29f-c8dc15d8c7f5",
+    "name": "Delivery Agent Registration API",
+    "description": "API endpoints for delivery agent registration system",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+    "_exporter_id": "50657319",
+    "_collection_link": "https://go.postman.co/collection/50657319-1742d733-4663-436b-b29f-c8dc15d8c7f5?source=collection_link"
+  },
+  "item": [
+    {
+      "name": "Delivery Registration",
+      "item": [
+        {
+          "name": "1. Send OTP (registration)",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n    \"email\": \"test@example.com\",\n    \"type\": \"registration\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{base_url}}/v1/send-otp?lang={{lang}}",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "v1",
+                "send-otp"
+              ],
+              "query": [
+                {
+                  "key": "lang",
+                  "value": "{{lang}}"
+                }
+              ]
+            },
+            "description": "إرسال رمز التحقق OTP إلى البريد الإلكتروني للبدء في عملية التسجيل"
+          },
+          "response": []
+        },
+        {
+          "name": "2. Verify OTP (registration)",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n    \"email\": \"test@example.com\",\n    \"code\": \"{{otp}}\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{base_url}}/v1/verify-otp?lang={{lang}}",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "v1",
+                "verify-otp"
+              ],
+              "query": [
+                {
+                  "key": "lang",
+                  "value": "{{lang}}"
+                }
+              ]
+            },
+            "description": "التحقق من رمز OTP والحصولة على الـ temp_token"
+          },
+          "response": []
+        },
+        {
+          "name": "3. Personal Details (Step 1)",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "formdata",
+              "formdata": [
+                {
+                  "key": "temp_token",
+                  "value": "{{temp_token}}",
+                  "type": "text",
+                  "description": "توكن التحقق المؤقت"
+                },
+                {
+                  "key": "name",
+                  "value": "أحمد محمد",
+                  "type": "text",
+                  "description": "اسم عامل التوصيل بالكامل"
+                },
+                {
+                  "key": "phone",
+                  "value": "0501234567",
+                  "type": "text",
+                  "description": "رقم الجوال (يجب أن يكون فريداً)"
+                },
+                {
+                  "key": "nationality",
+                  "value": "السعودية",
+                  "type": "text",
+                  "description": "الجنسية"
+                },
+                {
+                  "key": "national_id_number",
+                  "value": "1234567890",
+                  "type": "text",
+                  "description": "رقم الهوية أو الإقامة"
+                },
+                {
+                  "key": "birth_date",
+                  "value": "1995-05-15",
+                  "type": "text",
+                  "description": "تاريخ الميلاد (YYYY-MM-DD)"
+                },
+                {
+                  "key": "working_service",
+                  "value": "dabab_tawseel",
+                  "type": "text",
+                  "description": "الخدمة التي سيعمل عليها (dabab_tawseel, car_wash)"
+                },
+                {
+                  "key": "profile_photo",
+                  "type": "file",
+                  "description": "الصورة الشخصية",
+                  "value": null
+                }
+              ]
+            },
+            "url": {
+              "raw": "{{base_url}}/v1/delivery-agent/complete-profile?lang={{lang}}",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "v1",
+                "delivery-agent",
+                "complete-profile"
+              ],
+              "query": [
+                {
+                  "key": "lang",
+                  "value": "{{lang}}"
+                }
+              ]
+            },
+            "description": "الخطوة الأولى: إدخال البيانات الشخصية ورفع الصورة الشخصية"
+          },
+          "response": []
+        },
+        {
+          "name": "4. Vehicle Details & Documents (Step 2)",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "formdata",
+              "formdata": [
+                {
+                  "key": "temp_token",
+                  "value": "{{temp_token}}",
+                  "type": "text",
+                  "description": "توكن التحقق"
+                },
+                {
+                  "key": "vehicle_type",
+                  "value": "car",
+                  "type": "text",
+                  "description": "نوع المركبة (car, motorcycle, etc)"
+                },
+                {
+                  "key": "vehicle_brand",
+                  "value": "Toyota",
+                  "type": "text",
+                  "description": "ماركة المركبة"
+                },
+                {
+                  "key": "vehicle_model",
+                  "value": "Camry",
+                  "type": "text",
+                  "description": "موديل المركبة"
+                },
+                {
+                  "key": "manufacturing_year",
+                  "value": "2022",
+                  "type": "text",
+                  "description": "سنة التصنيع"
+                },
+                {
+                  "key": "license_plate_number",
+                  "value": "1234",
+                  "type": "text",
+                  "description": "أرقام اللوحة"
+                },
+                {
+                  "key": "license_plate_letters",
+                  "value": "أ ب ج",
+                  "type": "text",
+                  "description": "حروف اللوحة"
+                },
+                {
+                  "key": "license_type",
+                  "value": "Private",
+                  "type": "text",
+                  "description": "نوع الرخصة"
+                },
+                {
+                  "key": "id_front",
+                  "type": "file",
+                  "description": "صورة الهوية من الأمام",
+                  "value": null
+                },
+                {
+                  "key": "id_back",
+                  "type": "file",
+                  "description": "صورة الهوية من الخلف",
+                  "value": null
+                },
+                {
+                  "key": "driving_license",
+                  "type": "file",
+                  "description": "صورة رخصة القيادة",
+                  "value": null
+                },
+                {
+                  "key": "vehicle_registration_front",
+                  "type": "file",
+                  "description": "صورة الاستمارة من الأمام",
+                  "value": null
+                },
+                {
+                  "key": "vehicle_registration_back",
+                  "type": "file",
+                  "description": "صورة الاستمارة من الخلف",
+                  "value": null
+                },
+                {
+                  "key": "criminal_record",
+                  "type": "file",
+                  "description": "صحيفة الحالة الجنائية",
+                  "value": null
+                },
+                {
+                  "key": "medical_check",
+                  "type": "file",
+                  "description": "الفحص الطبي أو شهادة اللياقة (خاص بالعجلة)",
+                  "value": null
+                },
+                {
+                  "key": "vehicle_insurance",
+                  "type": "file",
+                  "description": "تأمين المركبة",
+                  "value": null
+                },
+                {
+                  "key": "vehicle_photo",
+                  "type": "file",
+                  "description": "صورة المركبة بالكامل",
+                  "value": null
+                }
+              ]
+            },
+            "url": {
+              "raw": "{{base_url}}/v1/delivery-agent/register-vehicle?lang={{lang}}",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "v1",
+                "delivery-agent",
+                "register-vehicle"
+              ],
+              "query": [
+                {
+                  "key": "lang",
+                  "value": "{{lang}}"
+                }
+              ]
+            },
+            "description": "الخطوة الثانية: بيانات المركبة ورفع كافة المستندات المطلوبة في طلب واحد"
+          },
+          "response": []
+        },
+        {
+          "name": "5. Bank Details (LAST STEP - FINALIZE)",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n    \"temp_token\": \"{{temp_token}}\",\n    \"bank_name\": \"البنك الأهلي السعودي\",\n    \"account_holder_name\": \"أحمد محمد علي\",\n    \"iban\": \"SA1234567890123456789012\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{base_url}}/v1/delivery-agent/register-bank?lang={{lang}}",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "v1",
+                "delivery-agent",
+                "register-bank"
+              ],
+              "query": [
+                {
+                  "key": "lang",
+                  "value": "{{lang}}"
+                }
+              ]
+            },
+            "description": "الخطوة الثالثة والأخيرة: إدخال البيانات البنكية، وعند الإرسال يتم إنشاء الحساب رسمياً واستلام التوكن"
+          },
+          "response": []
+        },
+        {
+          "name": "Registration Status (Bearer Token Required)",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              },
+              {
+                "key": "Authorization",
+                "value": "Bearer {{token}}"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/v1/delivery-agent/registration-status?lang={{lang}}",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "v1",
+                "delivery-agent",
+                "registration-status"
+              ],
+              "query": [
+                {
+                  "key": "lang",
+                  "value": "{{lang}}"
+                }
+              ]
+            },
+            "description": "التحقق من حالة الحساب بعد التسجيل (يتطلب التوكن النهائي)"
+          },
+          "response": []
+        },
+        {
+          "name": "send OTP (LOGIN)",
+          "request": {
+            "method": "POST",
+            "header": [],
+            "body": {
+              "mode": "raw",
+              "raw": "{\r\n    \"email\": \"test@example.com\",\r\n    \"type\": \"login\"\r\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{base_url}}/v1/send-otp?lang={{lang}}",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "v1",
+                "send-otp"
+              ],
+              "query": [
+                {
+                  "key": "lang",
+                  "value": "{{lang}}"
+                }
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "login",
+          "request": {
+            "method": "POST",
+            "header": [],
+            "body": {
+              "mode": "raw",
+              "raw": "{\r\n    \"email\": \"myrajensen55@gmail.com\",\r\n    \"code\": \"{{otp}}\"\r\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{base_url}}/v1/login?lang={{lang}}",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "v1",
+                "login"
+              ],
+              "query": [
+                {
+                  "key": "lang",
+                  "value": "{{lang}}"
+                }
+              ]
+            }
+          },
+          "response": []
+        }
+      ]
+    },
+    {
+      "name": "Task Management (إدارة المهام)",
+      "item": [
+        {
+          "name": "1. Get Available Tasks",
+          "request": {
+            "method": "GET",
+            "header": [
+              { "key": "Accept", "value": "application/json" },
+              { "key": "Authorization", "value": "Bearer {{token}}" }
+            ],
+            "url": {
+              "raw": "{{base_url}}/v1/delivery-agent/tasks/available?type={{type}}&lang={{lang}}",
+              "host": ["{{base_url}}"],
+              "path": ["v1", "delivery-agent", "tasks", "available"],
+              "query": [
+                { "key": "type", "value": "{{type}}" },
+                { "key": "lang", "value": "{{lang}}" }
+              ]
+            },
+            "description": "جلب المهام المتاحة للقريبين بناءً على نوع خدمة المندوب"
+          }
+        },
+        {
+          "name": "2. Accept Task",
+          "request": {
+            "method": "POST",
+            "header": [
+              { "key": "Accept", "value": "application/json" },
+              { "key": "Authorization", "value": "Bearer {{token}}" }
+            ],
+            "url": {
+              "raw": "{{base_url}}/v1/delivery-agent/tasks/:type/:id/accept?lang={{lang}}",
+              "host": ["{{base_url}}"],
+              "path": ["v1", "delivery-agent", "tasks", ":type", ":id", "accept"],
+              "query": [{ "key": "lang", "value": "{{lang}}" }],
+              "variable": [
+                { "key": "type", "value": "order", "description": "order, delivery, car_wash" },
+                { "key": "id", "value": "1" }
+              ]
+            },
+            "description": "قبول مهمة معينة (استبدل :type بـ order أو delivery أو car_wash حسب نوع المهمة)"
+          }
+        },
+        {
+          "name": "3. Get Active Tasks",
+          "request": {
+            "method": "GET",
+            "header": [
+              { "key": "Accept", "value": "application/json" },
+              { "key": "Authorization", "value": "Bearer {{token}}" }
+            ],
+            "url": {
+              "raw": "{{base_url}}/v1/delivery-agent/tasks/active?status=in_progress&lang={{lang}}",
+              "host": ["{{base_url}}"],
+              "path": ["v1", "delivery-agent", "tasks", "active"],
+              "query": [
+                { "key": "status", "value": "in_progress" },
+                { "key": "lang", "value": "{{lang}}" }
+              ]
+            },
+            "description": "عرض مهامي الحالية أو المكتملة"
+          }
+        },
+        {
+          "name": "4. Upload Task Proof (Photos)",
+          "request": {
+            "method": "POST",
+            "header": [
+              { "key": "Accept", "value": "application/json" },
+              { "key": "Authorization", "value": "Bearer {{token}}" }
+            ],
+            "body": {
+              "mode": "formdata",
+              "formdata": [
+                { "key": "item_photo", "type": "file", "value": null },
+                { "key": "invoice_photo", "type": "file", "value": null }
+              ]
+            },
+            "url": {
+              "raw": "{{base_url}}/v1/delivery-agent/tasks/:type/:id/proof?lang={{lang}}",
+              "host": ["{{base_url}}"],
+              "path": ["v1", "delivery-agent", "tasks", ":type", ":id", "proof"],
+              "query": [{ "key": "lang", "value": "{{lang}}" }],
+              "variable": [
+                { "key": "type", "value": "order" },
+                { "key": "id", "value": "1" }
+              ]
+            },
+            "description": "رفع صور الفاتورة أو الغرض لإثبات العملية"
+          }
+        },
+        {
+          "name": "5. Update Task Status (Complete)",
+          "request": {
+            "method": "POST",
+            "header": [
+              { "key": "Accept", "value": "application/json" },
+              { "key": "Authorization", "value": "Bearer {{token}}" }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n    \"status\": \"completed\"\n}",
+              "options": { "raw": { "language": "json" } }
+            },
+            "url": {
+              "raw": "{{base_url}}/v1/delivery-agent/tasks/:type/:id/status?lang={{lang}}",
+              "host": ["{{base_url}}"],
+              "path": ["v1", "delivery-agent", "tasks", ":type", ":id", "status"],
+              "query": [{ "key": "lang", "value": "{{lang}}" }],
+              "variable": [
+                { "key": "type", "value": "order" },
+                { "key": "id", "value": "1" }
+              ]
+            },
+            "description": "تحديث حالة المهمة إلى مكتملة أو ملغاة"
+          }
+        }
+      ]
+    }
+  ],
+  "variable": [
+    {
+      "key": "base_url",
+      "value": "http://127.0.0.1:8000/api",
+      "type": "string"
+    },
+    {
+      "key": "token",
+      "value": "",
+      "type": "string"
+    },
+    {
+      "key": "temp_token",
+      "value": "",
+      "type": "string"
+    },
+    {
+      "key": "otp",
+      "value": "",
+      "type": "string"
+    },
+    {
+      "key": "lang",
+      "value": "ar",
+      "type": "string"
+    }
+  ]
+}

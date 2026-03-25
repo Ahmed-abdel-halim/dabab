@@ -15,6 +15,7 @@ use App\Http\Controllers\V1\PaymentController;
 use App\Http\Controllers\V1\WalletController;
 use App\Http\Controllers\V1\InfoController;
 use App\Http\Controllers\V1\DeliveryAgent\DeliveryAgentRegistrationController;
+use App\Http\Controllers\V1\DeliveryAgent\DeliveryAgentOrderController;
 
 // Public Routes
 Route::post('v1/send-otp', [AuthController::class, 'sendVerificationCode']);
@@ -118,6 +119,15 @@ Route::middleware('auth:sanctum')->group(function () {
 
     // Delivery Agent Status Route (Authenticated users only)
     Route::get('v1/delivery-agent/registration-status', [DeliveryAgentRegistrationController::class, 'getRegistrationStatus']);
+
+    // Delivery Agent Task Management (Authenticated agents only)
+    Route::prefix('v1/delivery-agent/tasks')->group(function () {
+        Route::get('/available', [DeliveryAgentOrderController::class, 'getAvailableTasks']);
+        Route::post('/{type}/{id}/accept', [DeliveryAgentOrderController::class, 'acceptTask']);
+        Route::get('/active', [DeliveryAgentOrderController::class, 'getMyActiveTasks']);
+        Route::post('/{type}/{id}/status', [DeliveryAgentOrderController::class, 'updateTaskStatus']);
+        Route::post('/{type}/{id}/proof', [DeliveryAgentOrderController::class, 'uploadTaskProof']);
+    });
 });
 
 // Delivery Agent Registration Steps (Guest with temp_token)

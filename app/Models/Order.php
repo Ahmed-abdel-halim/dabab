@@ -16,10 +16,15 @@ class Order extends Model
         'location_id',
         'payment_method', // cash, apple_pay, bank_card
         'payment_status', // pending, paid
+        'delivery_agent_id',
+        'item_photo',
+        'invoice_photo',
+        'delivered_at',
     ];
 
     protected $casts = [
         'scheduled_at' => 'datetime',
+        'delivered_at' => 'datetime',
         'delivery_cost' => 'decimal:2',
         'total_cost' => 'decimal:2',
     ];
@@ -29,6 +34,11 @@ class Order extends Model
         'category_name',
         'details',
     ];
+
+    public function agent()
+    {
+        return $this->belongsTo(User::class, 'delivery_agent_id');
+    }
 
     public function user()
     {

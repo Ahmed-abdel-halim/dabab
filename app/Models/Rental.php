@@ -16,6 +16,11 @@ class Rental extends Model
         'commercial_registration_file',
         'additional_details',
         'status', // pending, approved, rejected
+        'cost',
+    ];
+
+    protected $casts = [
+        'cost' => 'decimal:2',
     ];
 
     public function user()
