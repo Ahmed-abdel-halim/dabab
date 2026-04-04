@@ -16,6 +16,7 @@ use App\Http\Controllers\V1\WalletController;
 use App\Http\Controllers\V1\InfoController;
 use App\Http\Controllers\V1\DeliveryAgent\DeliveryAgentRegistrationController;
 use App\Http\Controllers\V1\DeliveryAgent\DeliveryAgentOrderController;
+use App\Http\Controllers\V1\DeliveryAgent\DeliveryAgentSettingsController;
 
 // Public Routes
 Route::post('v1/send-otp', [AuthController::class, 'sendVerificationCode']);
@@ -36,6 +37,8 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::post('v1/complete-location', [AuthController::class, 'completeLocation']);
     Route::get('v1/mylocation', [AuthController::class, 'getLocation']);
     Route::get('v1/profile', [AuthController::class, 'profile']);
+    Route::post('v1/update-profile', [AuthController::class, 'updateProfile']);
+    Route::post('v1/delete-account', [AuthController::class, 'deleteAccount']);
     Route::post('v1/update-locale', [AuthController::class, 'updateLocale']);
 
     // Reorder Route
@@ -127,6 +130,14 @@ Route::middleware('auth:sanctum')->group(function () {
         Route::get('/active', [DeliveryAgentOrderController::class, 'getMyActiveTasks']);
         Route::post('/{type}/{id}/status', [DeliveryAgentOrderController::class, 'updateTaskStatus']);
         Route::post('/{type}/{id}/proof', [DeliveryAgentOrderController::class, 'uploadTaskProof']);
+    });
+
+    // Delivery Agent Settings/Profile Update
+    Route::prefix('v1/delivery-agent/settings')->group(function () {
+        Route::post('/profile', [DeliveryAgentSettingsController::class, 'updateAgentProfile']);
+        Route::post('/vehicle', [DeliveryAgentSettingsController::class, 'updateVehicle']);
+        Route::post('/bank', [DeliveryAgentSettingsController::class, 'updateBankDetails']);
+        Route::post('/documents', [DeliveryAgentSettingsController::class, 'updateDocument']);
     });
 });
 

@@ -12,5 +12,6 @@ class Page extends Model
         'title_en',
         'content_ar',
         'content_en',
+        'type',
     ];
 }

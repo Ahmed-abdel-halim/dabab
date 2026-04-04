@@ -1,11 +1,11 @@
 {
   "info": {
-    "_postman_id": "1742d733-4663-436b-b29f-c8dc15d8c7f5",
+    "_postman_id": "3ec7b6d3-1ce9-43c9-82d9-186b7b5454ee",
     "name": "Delivery Agent Registration API",
     "description": "API endpoints for delivery agent registration system",
     "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
     "_exporter_id": "50657319",
-    "_collection_link": "https://go.postman.co/collection/50657319-1742d733-4663-436b-b29f-c8dc15d8c7f5?source=collection_link"
+    "_collection_link": "https://go.postman.co/collection/50657319-3ec7b6d3-1ce9-43c9-82d9-186b7b5454ee?source=collection_link"
   },
   "item": [
     {
@@ -462,64 +462,358 @@
           "request": {
             "method": "GET",
             "header": [
-              { "key": "Accept", "value": "application/json" },
-              { "key": "Authorization", "value": "Bearer {{token}}" }
+              {
+                "key": "Accept",
+                "value": "application/json"
+              },
+              {
+                "key": "Authorization",
+                "value": "Bearer {{token}}"
+              }
             ],
             "url": {
               "raw": "{{base_url}}/v1/delivery-agent/tasks/available?type={{type}}&lang={{lang}}",
-              "host": ["{{base_url}}"],
-              "path": ["v1", "delivery-agent", "tasks", "available"],
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "v1",
+                "delivery-agent",
+                "tasks",
+                "available"
+              ],
               "query": [
-                { "key": "type", "value": "{{type}}" },
-                { "key": "lang", "value": "{{lang}}" }
+                {
+                  "key": "type",
+                  "value": "{{type}}"
+                },
+                {
+                  "key": "lang",
+                  "value": "{{lang}}"
+                }
               ]
             },
             "description": "جلب المهام المتاحة للقريبين بناءً على نوع خدمة المندوب"
-          }
+          },
+          "response": []
         },
         {
           "name": "2. Accept Task",
           "request": {
             "method": "POST",
             "header": [
-              { "key": "Accept", "value": "application/json" },
-              { "key": "Authorization", "value": "Bearer {{token}}" }
+              {
+                "key": "Accept",
+                "value": "application/json"
+              },
+              {
+                "key": "Authorization",
+                "value": "Bearer {{token}}"
+              }
             ],
             "url": {
               "raw": "{{base_url}}/v1/delivery-agent/tasks/:type/:id/accept?lang={{lang}}",
-              "host": ["{{base_url}}"],
-              "path": ["v1", "delivery-agent", "tasks", ":type", ":id", "accept"],
-              "query": [{ "key": "lang", "value": "{{lang}}" }],
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "v1",
+                "delivery-agent",
+                "tasks",
+                ":type",
+                ":id",
+                "accept"
+              ],
+              "query": [
+                {
+                  "key": "lang",
+                  "value": "{{lang}}"
+                }
+              ],
               "variable": [
-                { "key": "type", "value": "order", "description": "order, delivery, car_wash" },
-                { "key": "id", "value": "1" }
+                {
+                  "key": "type",
+                  "value": "order",
+                  "description": "order, delivery, car_wash"
+                },
+                {
+                  "key": "id",
+                  "value": "1"
+                }
               ]
             },
             "description": "قبول مهمة معينة (استبدل :type بـ order أو delivery أو car_wash حسب نوع المهمة)"
-          }
+          },
+          "response": []
         },
         {
           "name": "3. Get Active Tasks",
           "request": {
             "method": "GET",
             "header": [
-              { "key": "Accept", "value": "application/json" },
-              { "key": "Authorization", "value": "Bearer {{token}}" }
+              {
+                "key": "Accept",
+                "value": "application/json"
+              },
+              {
+                "key": "Authorization",
+                "value": "Bearer {{token}}"
+              }
             ],
             "url": {
               "raw": "{{base_url}}/v1/delivery-agent/tasks/active?status=in_progress&lang={{lang}}",
-              "host": ["{{base_url}}"],
-              "path": ["v1", "delivery-agent", "tasks", "active"],
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "v1",
+                "delivery-agent",
+                "tasks",
+                "active"
+              ],
               "query": [
-                { "key": "status", "value": "in_progress" },
-                { "key": "lang", "value": "{{lang}}" }
+                {
+                  "key": "status",
+                  "value": "in_progress"
+                },
+                {
+                  "key": "lang",
+                  "value": "{{lang}}"
+                }
               ]
             },
             "description": "عرض مهامي الحالية أو المكتملة"
-          }
+          },
+          "response": []
         },
         {
           "name": "4. Upload Task Proof (Photos)",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              },
+              {
+                "key": "Authorization",
+                "value": "Bearer {{token}}"
+              }
+            ],
+            "body": {
+              "mode": "formdata",
+              "formdata": [
+                {
+                  "key": "item_photo",
+                  "type": "file",
+                  "value": null
+                },
+                {
+                  "key": "invoice_photo",
+                  "type": "file",
+                  "value": null
+                }
+              ]
+            },
+            "url": {
+              "raw": "{{base_url}}/v1/delivery-agent/tasks/:type/:id/proof?lang={{lang}}",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "v1",
+                "delivery-agent",
+                "tasks",
+                ":type",
+                ":id",
+                "proof"
+              ],
+              "query": [
+                {
+                  "key": "lang",
+                  "value": "{{lang}}"
+                }
+              ],
+              "variable": [
+                {
+                  "key": "type",
+                  "value": "order"
+                },
+                {
+                  "key": "id",
+                  "value": "1"
+                }
+              ]
+            },
+            "description": "رفع صور الفاتورة أو الغرض لإثبات العملية"
+          },
+          "response": []
+        },
+        {
+          "name": "5. Update Task Status (Complete)",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              },
+              {
+                "key": "Authorization",
+                "value": "Bearer {{token}}"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n    \"status\": \"completed\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{base_url}}/v1/delivery-agent/tasks/:type/:id/status?lang={{lang}}",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "v1",
+                "delivery-agent",
+                "tasks",
+                ":type",
+                ":id",
+                "status"
+              ],
+              "query": [
+                {
+                  "key": "lang",
+                  "value": "{{lang}}"
+                }
+              ],
+              "variable": [
+                {
+                  "key": "type",
+                  "value": "order"
+                },
+                {
+                  "key": "id",
+                  "value": "1"
+                }
+              ]
+            },
+            "description": "تحديث حالة المهمة إلى مكتملة أو ملغاة"
+          },
+          "response": []
+        }
+      ]
+    },
+    {
+      "name": "Settings & Information (الإعدادات والمعلومات)",
+      "item": [
+        {
+          "name": "1. Update Agent Profile",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              },
+              {
+                "key": "Authorization",
+                "value": "Bearer {{token}}"
+              }
+            ],
+            "body": {
+              "mode": "formdata",
+              "formdata": [
+                { "key": "name", "value": "أحمد الجديد", "type": "text" },
+                { "key": "phone", "value": "0509998877", "type": "text" },
+                { "key": "nationality", "value": "السعودية", "type": "text" },
+                { "key": "national_id_number", "value": "1234567890", "type": "text" },
+                { "key": "birth_date", "value": "1995-01-01", "type": "text" },
+                { "key": "working_service", "value": "tawseel", "type": "text" },
+                { "key": "profile_photo", "type": "file", "value": null }
+              ]
+            },
+            "url": {
+              "raw": "{{base_url}}/v1/delivery-agent/settings/profile?lang={{lang}}",
+              "host": ["{{base_url}}"],
+              "path": ["v1", "delivery-agent", "settings", "profile"],
+              "query": [{ "key": "lang", "value": "{{lang}}" }]
+            },
+            "description": "تحديث البيانات الشخصية للمندوب"
+          },
+          "response": []
+        },
+        {
+          "name": "2. Update Vehicle details",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              },
+              {
+                "key": "Authorization",
+                "value": "Bearer {{token}}"
+              }
+            ],
+            "body": {
+              "mode": "formdata",
+              "formdata": [
+                { "key": "vehicle_type", "value": "car", "type": "text" },
+                { "key": "vehicle_brand", "value": "Toyota", "type": "text" },
+                { "key": "vehicle_model", "value": "Corolla", "type": "text" },
+                { "key": "manufacturing_year", "value": "2023", "type": "text" },
+                { "key": "license_plate_number", "value": "5555", "type": "text" },
+                { "key": "license_plate_letters", "value": "د ب ب", "type": "text" },
+                { "key": "vehicle_photo", "type": "file", "value": null }
+              ]
+            },
+            "url": {
+              "raw": "{{base_url}}/v1/delivery-agent/settings/vehicle?lang={{lang}}",
+              "host": ["{{base_url}}"],
+              "path": ["v1", "delivery-agent", "settings", "vehicle"],
+              "query": [{ "key": "lang", "value": "{{lang}}" }]
+            },
+            "description": "تحديث بيانات المركبة"
+          },
+          "response": []
+        },
+        {
+          "name": "3. Update Bank details",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              },
+              {
+                "key": "Authorization",
+                "value": "Bearer {{token}}"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n    \"bank_name\": \"مصرف الراجحي\",\n    \"account_holder_name\": \"أحمد محمد\",\n    \"iban\": \"SA0000000000000000000000\"\n}",
+              "options": { "raw": { "language": "json" } }
+            },
+            "url": {
+              "raw": "{{base_url}}/v1/delivery-agent/settings/bank?lang={{lang}}",
+              "host": ["{{base_url}}"],
+              "path": ["v1", "delivery-agent", "settings", "bank"],
+              "query": [{ "key": "lang", "value": "{{lang}}" }]
+            },
+            "description": "تحديث البيانات البنكية"
+          },
+          "response": []
+        },
+        {
+          "name": "4. Upload New Document",
           "request": {
             "method": "POST",
             "header": [
@@ -529,25 +823,94 @@
             "body": {
               "mode": "formdata",
               "formdata": [
-                { "key": "item_photo", "type": "file", "value": null },
-                { "key": "invoice_photo", "type": "file", "value": null }
+                { "key": "document_type", "value": "driving_license", "type": "text" },
+                { "key": "file", "type": "file", "value": null }
               ]
             },
             "url": {
-              "raw": "{{base_url}}/v1/delivery-agent/tasks/:type/:id/proof?lang={{lang}}",
+              "raw": "{{base_url}}/v1/delivery-agent/settings/documents?lang={{lang}}",
               "host": ["{{base_url}}"],
-              "path": ["v1", "delivery-agent", "tasks", ":type", ":id", "proof"],
-              "query": [{ "key": "lang", "value": "{{lang}}" }],
-              "variable": [
-                { "key": "type", "value": "order" },
-                { "key": "id", "value": "1" }
-              ]
+              "path": ["v1", "delivery-agent", "settings", "documents"],
+              "query": [{ "key": "lang", "value": "{{lang}}" }]
             },
-            "description": "رفع صور الفاتورة أو الغرض لإثبات العملية"
-          }
+            "description": "رفع مستند جديد (رخصة، استمارة، الخ)"
+          },
+          "response": []
         },
         {
-          "name": "5. Update Task Status (Complete)",
+          "name": "5. Get Wallet Balance",
+          "request": {
+            "method": "GET",
+            "header": [
+              { "key": "Accept", "value": "application/json" },
+              { "key": "Authorization", "value": "Bearer {{token}}" }
+            ],
+            "url": {
+              "raw": "{{base_url}}/v1/wallet/balance?lang={{lang}}",
+              "host": ["{{base_url}}"],
+              "path": ["v1", "wallet", "balance"],
+              "query": [{ "key": "lang", "value": "{{lang}}" }]
+            },
+            "description": "جلب رصيد المحفظة الحالي"
+          },
+          "response": []
+        },
+        {
+          "name": "6. FAQs (Delivery Type)",
+          "request": {
+            "method": "GET",
+            "header": [ { "key": "Accept", "value": "application/json" } ],
+            "url": {
+              "raw": "{{base_url}}/v1/faqs?type=delivery_agent&lang={{lang}}",
+              "host": ["{{base_url}}"],
+              "path": ["v1", "faqs"],
+              "query": [
+                { "key": "type", "value": "delivery_agent" },
+                { "key": "lang", "value": "{{lang}}" }
+              ]
+            },
+            "description": "جلب الأسئلة الشائعة الخاصة بالمندوبين"
+          },
+          "response": []
+        },
+        {
+          "name": "7. Privacy Policy (Delivery Type)",
+          "request": {
+            "method": "GET",
+            "header": [ { "key": "Accept", "value": "application/json" } ],
+            "url": {
+              "raw": "{{base_url}}/v1/privacy-policy?type=delivery_agent&lang={{lang}}",
+              "host": ["{{base_url}}"],
+              "path": ["v1", "privacy-policy"],
+              "query": [
+                { "key": "type", "value": "delivery_agent" },
+                { "key": "lang", "value": "{{lang}}" }
+              ]
+            },
+            "description": "جلب سياسة الخصوصية الخاصة بالمندوبين"
+          },
+          "response": []
+        },
+        {
+          "name": "8. Terms and Conditions (Delivery Type)",
+          "request": {
+            "method": "GET",
+            "header": [ { "key": "Accept", "value": "application/json" } ],
+            "url": {
+              "raw": "{{base_url}}/v1/terms-and-conditions?type=delivery_agent&lang={{lang}}",
+              "host": ["{{base_url}}"],
+              "path": ["v1", "terms-and-conditions"],
+              "query": [
+                { "key": "type", "value": "delivery_agent" },
+                { "key": "lang", "value": "{{lang}}" }
+              ]
+            },
+            "description": "جلب الشروط والأحكام الخاصة بالمندوبين"
+          },
+          "response": []
+        },
+        {
+          "name": "9. Update Language",
           "request": {
             "method": "POST",
             "header": [
@@ -556,21 +919,36 @@
             ],
             "body": {
               "mode": "raw",
-              "raw": "{\n    \"status\": \"completed\"\n}",
+              "raw": "{\n    \"locale\": \"en\"\n}",
               "options": { "raw": { "language": "json" } }
             },
             "url": {
-              "raw": "{{base_url}}/v1/delivery-agent/tasks/:type/:id/status?lang={{lang}}",
+              "raw": "{{base_url}}/v1/update-locale?lang={{lang}}",
               "host": ["{{base_url}}"],
-              "path": ["v1", "delivery-agent", "tasks", ":type", ":id", "status"],
-              "query": [{ "key": "lang", "value": "{{lang}}" }],
-              "variable": [
-                { "key": "type", "value": "order" },
-                { "key": "id", "value": "1" }
-              ]
+              "path": ["v1", "update-locale"],
+              "query": [{ "key": "lang", "value": "{{lang}}" }]
             },
-            "description": "تحديث حالة المهمة إلى مكتملة أو ملغاة"
-          }
+            "description": "تحديث لغة التطبيق للمستخدم الحالي"
+          },
+          "response": []
+        },
+        {
+          "name": "10. Delete Account",
+          "request": {
+            "method": "POST",
+            "header": [
+              { "key": "Accept", "value": "application/json" },
+              { "key": "Authorization", "value": "Bearer {{token}}" }
+            ],
+            "url": {
+              "raw": "{{base_url}}/v1/delete-account?lang={{lang}}",
+              "host": ["{{base_url}}"],
+              "path": ["v1", "delete-account"],
+              "query": [{ "key": "lang", "value": "{{lang}}" }]
+            },
+            "description": "حذف حساب المستخدم الحالي نهائياً"
+          },
+          "response": []
         }
       ]
     }
@@ -578,28 +956,23 @@
   "variable": [
     {
       "key": "base_url",
-      "value": "http://127.0.0.1:8000/api",
-      "type": "string"
+      "value": "http://127.0.0.1:8000/api"
     },
     {
       "key": "token",
-      "value": "",
-      "type": "string"
+      "value": ""
     },
     {
       "key": "temp_token",
-      "value": "",
-      "type": "string"
+      "value": ""
     },
     {
       "key": "otp",
-      "value": "",
-      "type": "string"
+      "value": ""
     },
     {
       "key": "lang",
-      "value": "ar",
-      "type": "string"
+      "value": "ar"
     }
   ]
 }

@@ -320,11 +320,18 @@ class DeliveryAgentRegistrationController extends Controller
                 ];
             }
 
+            // Calculate completed tasks count
+            $completedOrders = \App\Models\Order::where('delivery_agent_id', $user->id)->where('status', 'completed')->count();
+            $completedDeliveries = \App\Models\Delivery::where('delivery_agent_id', $user->id)->where('status', 'completed')->count();
+            $completedCarWashes = \App\Models\CarWash::where('delivery_agent_id', $user->id)->where('status', 'completed')->count();
+            $completedTasksCount = $completedOrders + $completedDeliveries + $completedCarWashes;
+
             return $this->successResponse([
                 'user' => $user,
                 'profile' => $profile,
                 'status' => $profile->status,
                 'admin_comment' => $profile->admin_comment,
+                'completed_tasks_count' => $completedTasksCount,
                 'dashboard_services' => $dashboardServices,
             ]);
 

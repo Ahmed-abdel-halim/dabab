@@ -16,18 +16,22 @@ class InfoController extends Controller
 {
     use ApiResponseTrait;
 
-    public function getFaqs()
+    public function getFaqs(Request $request)
     {
+        $type = $request->query('type', 'customer');
+        
         $faqs = Faq::where('is_active', true)
+            ->where('type', $type)
             ->orderBy('sort_order')
             ->get();
 
         return $this->successResponse(FaqResource::collection($faqs));
     }
 
-    public function getPrivacyPolicy()
+    public function getPrivacyPolicy(Request $request)
     {
-        $page = Page::where('slug', 'privacy-policy')->first();
+        $type = $request->query('type', 'customer');
+        $page = Page::where('slug', 'privacy-policy')->where('type', $type)->first();
 
         if (!$page) {
             return $this->errorResponse(__('messages.info.privacy_policy_not_found'), 404);
@@ -36,9 +40,10 @@ class InfoController extends Controller
         return $this->successResponse(new PageResource($page));
     }
 
-    public function getTermsAndConditions()
+    public function getTermsAndConditions(Request $request)
     {
-        $page = Page::where('slug', 'terms-and-conditions')->first();
+        $type = $request->query('type', 'customer');
+        $page = Page::where('slug', 'terms-and-conditions')->where('type', $type)->first();
 
         if (!$page) {
             return $this->errorResponse(__('messages.info.terms_not_found'), 404);
@@ -47,9 +52,10 @@ class InfoController extends Controller
         return $this->successResponse(new PageResource($page));
     }
 
-    public function getPage($slug)
+    public function getPage(Request $request, $slug)
     {
-        $page = Page::where('slug', $slug)->first();
+        $type = $request->query('type', 'customer');
+        $page = Page::where('slug', $slug)->where('type', $type)->first();
 
         if (!$page) {
             return $this->errorResponse(__('messages.info.page_not_found'), 404);

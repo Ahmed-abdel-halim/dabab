@@ -10,6 +10,7 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Mail;
+use Illuminate\Support\Facades\Storage;
 use App\Mail\OtpMail;
 
 class AuthController extends Controller
@@ -210,6 +211,46 @@ class AuthController extends Controller
         );
 
         return $this->successResponse($location, __('messages.auth.location_updated'));
+    }
+
+    public function updateProfile(Request $request)
+    {
+        $request->validate([
+            'name' => 'nullable|string|max:255',
+            'email' => 'nullable|email|unique:users,email,' . $request->user()->id,
+            'phone' => 'nullable|string|unique:users,phone,' . $request->user()->id,
+            'profile_photo' => 'nullable|image|mimes:jpeg,png,jpg|max:5120',
+        ]);
+
+        $user = $request->user();
+        $user->name = $request->name ?? $user->name;
+        $user->email = $request->email ?? $user->email;
+        $user->phone = $request->phone ?? $user->phone;
+
+        if ($request->hasFile('profile_photo')) {
+            // Delete old photo if exists
+            if ($user->profile_photo) {
+                Storage::disk('public')->delete($user->profile_photo);
+            }
+            $user->profile_photo = $request->file('profile_photo')->store('profiles', 'public');
+        }
+
+        $user->save();
+
+        return $this->successResponse($user, __('messages.auth.profile_updated'));
+    }
+
+    public function deleteAccount(Request $request)
+    {
+        $user = $request->user();
+        
+        // Revoke all tokens
+        $user->tokens()->delete();
+        
+        // Delete User (usually soft delete is better but simple for now)
+        $user->delete();
+
+        return $this->successResponse(null, __('messages.auth.account_deleted'));
     }
 
     public function updateLocale(Request $request)
