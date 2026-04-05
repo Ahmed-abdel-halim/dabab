@@ -50,7 +50,8 @@ class DeliveryAgentOrderController extends Controller
 
             // Get deliveries if type is 'delivery' or null
             if (!$requestedType || $requestedType === 'delivery') {
-                $deliveries = Delivery::where('status', 'confirmed')
+                // Deliveries are created as 'pending'
+                $deliveries = Delivery::where('status', 'pending')
                     ->whereNull('delivery_agent_id')
                     ->get()
                     ->map(function ($item) {
@@ -62,7 +63,8 @@ class DeliveryAgentOrderController extends Controller
         } elseif ($category === 'car_wash') {
             // Get car washes if type is null or 'car_wash'
             if (!$requestedType || $requestedType === 'car_wash') {
-                $carWashes = CarWash::where('status', 'confirmed')
+                // Car washes are created as 'pending'
+                $carWashes = CarWash::where('status', 'pending')
                     ->whereNull('delivery_agent_id')
                     ->with('location')
                     ->get()
@@ -89,9 +91,13 @@ class DeliveryAgentOrderController extends Controller
             return $this->errorResponse(__('messages.reorder.invalid_type'), 422);
         }
 
+        // Only Orders require 'confirmed' status before an agent can pick them up.
+        // Delivery and CarWash are 'pending'.
+        $validStatus = ($type === 'order') ? 'confirmed' : 'pending';
+
         $task = $model::where('id', $id)
             ->whereNull('delivery_agent_id')
-            ->where('status', 'confirmed')
+            ->where('status', $validStatus)
             ->first();
 
         if (!$task) {
