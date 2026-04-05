@@ -39,7 +39,7 @@ class DeliveryAgentOrderController extends Controller
             if (!$requestedType || $requestedType === 'order') {
                 $orders = Order::whereIn('status', ['pending', 'confirmed'])
                     ->whereNull('delivery_agent_id')
-                    ->with('location', 'items.category')
+                    ->with(['location', 'items.category', 'user:id,name,phone,profile_photo'])
                     ->get()
                     ->map(function ($item) {
                         $item->task_type = 'order';
@@ -53,6 +53,7 @@ class DeliveryAgentOrderController extends Controller
                 // Deliveries are created as 'pending'
                 $deliveries = Delivery::where('status', 'pending')
                     ->whereNull('delivery_agent_id')
+                    ->with('user:id,name,phone,profile_photo')
                     ->get()
                     ->map(function ($item) {
                         $item->task_type = 'delivery';
@@ -66,7 +67,7 @@ class DeliveryAgentOrderController extends Controller
                 // Car washes are created as 'pending'
                 $carWashes = CarWash::where('status', 'pending')
                     ->whereNull('delivery_agent_id')
-                    ->with('location')
+                    ->with(['location', 'user:id,name,phone,profile_photo'])
                     ->get()
                     ->map(function ($item) {
                         $item->task_type = 'car_wash';
