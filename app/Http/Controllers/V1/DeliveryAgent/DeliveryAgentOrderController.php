@@ -37,7 +37,7 @@ class DeliveryAgentOrderController extends Controller
         if ($category === 'tawseel') {
             // Get orders if type is 'order' or null
             if (!$requestedType || $requestedType === 'order') {
-                $orders = Order::where('status', 'confirmed')
+                $orders = Order::whereIn('status', ['pending', 'confirmed'])
                     ->whereNull('delivery_agent_id')
                     ->with('location', 'items.category')
                     ->get()
@@ -86,18 +86,16 @@ class DeliveryAgentOrderController extends Controller
     {
         $user = auth()->user();
         $model = $this->getModelByType($type);
-        
+
         if (!$model) {
             return $this->errorResponse(__('messages.reorder.invalid_type'), 422);
         }
 
-        // Only Orders require 'confirmed' status before an agent can pick them up.
-        // Delivery and CarWash are 'pending'.
-        $validStatus = ($type === 'order') ? 'confirmed' : 'pending';
+        $validStatuses = ($type === 'order') ? ['pending', 'confirmed'] : ['pending'];
 
         $task = $model::where('id', $id)
             ->whereNull('delivery_agent_id')
-            ->where('status', $validStatus)
+            ->whereIn('status', $validStatuses)
             ->first();
 
         if (!$task) {
@@ -148,13 +146,15 @@ class DeliveryAgentOrderController extends Controller
         $request->validate(['status' => 'required|in:in_progress,completed,cancelled']);
 
         $model = $this->getModelByType($type);
-        if (!$model) return $this->errorResponse(__('messages.reorder.invalid_type'), 422);
+        if (!$model)
+            return $this->errorResponse(__('messages.reorder.invalid_type'), 422);
 
         $task = $model::where('id', $id)
             ->where('delivery_agent_id', $user->id)
             ->first();
 
-        if (!$task) return $this->errorResponse(__('messages.order.loaded'), 404);
+        if (!$task)
+            return $this->errorResponse(__('messages.order.loaded'), 404);
 
         $updateData = ['status' => $request->status];
         if ($request->status === 'completed') {
@@ -183,13 +183,15 @@ class DeliveryAgentOrderController extends Controller
         }
 
         $model = $this->getModelByType($type);
-        if (!$model) return $this->errorResponse(__('messages.reorder.invalid_type'), 422);
+        if (!$model)
+            return $this->errorResponse(__('messages.reorder.invalid_type'), 422);
 
         $task = $model::where('id', $id)
             ->where('delivery_agent_id', $user->id)
             ->first();
 
-        if (!$task) return $this->errorResponse(__('messages.order.loaded'), 404);
+        if (!$task)
+            return $this->errorResponse(__('messages.order.loaded'), 404);
 
         $data = [];
         if ($request->hasFile('item_photo')) {
@@ -202,8 +204,10 @@ class DeliveryAgentOrderController extends Controller
         $task->update($data);
 
         // Map full URLs
-        if (isset($data['item_photo'])) $task->item_photo = asset('storage/' . $data['item_photo']);
-        if (isset($data['invoice_photo'])) $task->invoice_photo = asset('storage/' . $data['invoice_photo']);
+        if (isset($data['item_photo']))
+            $task->item_photo = asset('storage/' . $data['item_photo']);
+        if (isset($data['invoice_photo']))
+            $task->invoice_photo = asset('storage/' . $data['invoice_photo']);
 
         return $this->successResponse($task, __('messages.delivery_agent.document_uploaded'));
     }
@@ -211,10 +215,14 @@ class DeliveryAgentOrderController extends Controller
     private function getModelByType($type)
     {
         switch ($type) {
-            case 'order': return Order::class;
-            case 'delivery': return Delivery::class;
-            case 'car_wash': return CarWash::class;
-            default: return null;
+            case 'order':
+                return Order::class;
+            case 'delivery':
+                return Delivery::class;
+            case 'car_wash':
+                return CarWash::class;
+            default:
+                return null;
         }
     }
 }
