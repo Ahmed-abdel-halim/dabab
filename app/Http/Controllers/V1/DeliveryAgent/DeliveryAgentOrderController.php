@@ -213,6 +213,32 @@ class DeliveryAgentOrderController extends Controller
         return $this->successResponse($task, __('messages.delivery_agent.document_uploaded'));
     }
 
+    /**
+     * Get task photos (accessible by client and agent)
+     */
+    public function getTaskPhotos($type, $id)
+    {
+        $user = auth()->user();
+        $model = $this->getModelByType($type);
+        if (!$model)
+            return $this->errorResponse(__('messages.reorder.invalid_type'), 422);
+
+        $task = $model::where('id', $id)
+            ->where(function($query) use ($user) {
+                $query->where('user_id', $user->id)
+                      ->orWhere('delivery_agent_id', $user->id);
+            })
+            ->first();
+
+        if (!$task)
+            return $this->errorResponse(__('messages.order.loaded'), 404);
+
+        return $this->successResponse([
+            'item_photo' => $task->item_photo,
+            'invoice_photo' => $task->invoice_photo
+        ], __('messages.order.loaded'));
+    }
+
     private function getModelByType($type)
     {
         switch ($type) {

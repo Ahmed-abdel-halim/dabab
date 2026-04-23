@@ -19,6 +19,11 @@ class AppServiceProvider extends ServiceProvider
      */
     public function boot(): void
     {
-        //
+        view()->composer('admin.layouts.app', function ($view) {
+            $view->with('pendingOrdersCount', \App\Models\Order::where('status', 'pending')->count());
+            $view->with('pendingDeliveriesCount', \App\Models\Delivery::where('status', 'pending')->count());
+            $view->with('pendingRentalsCount', \App\Models\Rental::where('status', 'pending')->count());
+            $view->with('pendingCarWashesCount', \App\Models\CarWash::where('status', 'pending')->count());
+        });
     }
 }

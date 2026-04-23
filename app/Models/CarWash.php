@@ -24,6 +24,16 @@ class CarWash extends Model
         'delivered_at',
     ];
 
+    public function getItemPhotoAttribute($value)
+    {
+        return $value ? asset('storage/' . $value) : null;
+    }
+
+    public function getInvoicePhotoAttribute($value)
+    {
+        return $value ? asset('storage/' . $value) : null;
+    }
+
     protected $casts = [
         'scheduled_date' => 'date',
         'cost' => 'decimal:2',

@@ -28,6 +28,16 @@ class Delivery extends Model
         'delivered_at',
     ];
 
+    public function getItemPhotoAttribute($value)
+    {
+        return $value ? asset('storage/' . $value) : null;
+    }
+
+    public function getInvoicePhotoAttribute($value)
+    {
+        return $value ? asset('storage/' . $value) : null;
+    }
+
     protected $casts = [
         'sender_lat' => 'decimal:7',
         'sender_lng' => 'decimal:7',

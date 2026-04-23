@@ -44,6 +44,9 @@ Route::middleware('auth:sanctum')->group(function () {
     // Reorder Route
     Route::post('v1/reorder/{type}/{id}', [ReorderController::class, 'reorder']);
 
+    // General Task Photos Route
+    Route::get('v1/tasks/{type}/{id}/photos', [DeliveryAgentOrderController::class, 'getTaskPhotos']);
+
     // Address Routes
     Route::prefix('v1/addresses')->group(function () {
         Route::get('/', [AddressController::class, 'getMyAddresses']);

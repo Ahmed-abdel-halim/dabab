@@ -1,0 +1,112 @@
+{
+  "dashboard_style": {
+    "theme": {
+      "mode": "light",
+      "background": "#f4f6f8",
+      "surface": "#ffffff",
+      "primary": "#0f7c8c",
+      "primary_dark": "#0b6674",
+      "secondary": "#eaf6f8",
+      "text_main": "#1f2937",
+      "text_muted": "#6b7280",
+      "border": "#e5e7eb",
+      "success": "#22c55e",
+      "danger": "#ef4444",
+      "warning": "#f59e0b",
+      "shadow": "0 4px 12px rgba(0,0,0,0.06)"
+    },
+    "layout": {
+      "page_padding": "20px",
+      "gap": "20px",
+      "sidebar": {
+        "position": "right",
+        "width": "260px",
+        "background": "#0f7c8c",
+        "text_color": "#ffffff",
+        "border_radius": "0 0 0 20px"
+      },
+      "header": {
+        "height": "70px",
+        "background": "transparent",
+        "align": "center_between"
+      },
+      "content": {
+        "grid_gap": "20px",
+        "card_spacing": "20px"
+      }
+    },
+    "components": {
+      "card": {
+        "background": "#ffffff",
+        "border_radius": "12px",
+        "padding": "18px",
+        "shadow": "0 4px 12px rgba(0,0,0,0.05)",
+        "border": "1px solid #eef1f4"
+      },
+      "button": {
+        "border_radius": "8px",
+        "padding": "10px 16px",
+        "font_weight": "500",
+        "primary_bg": "#0f7c8c",
+        "primary_text": "#ffffff",
+        "light_bg": "#edf6f7",
+        "light_text": "#0f7c8c"
+      },
+      "input": {
+        "height": "42px",
+        "background": "#ffffff",
+        "border": "1px solid #e5e7eb",
+        "border_radius": "24px",
+        "padding": "0 16px"
+      },
+      "icon_box": {
+        "size": "44px",
+        "background": "#eaf6f8",
+        "border_radius": "8px",
+        "icon_color": "#0f7c8c"
+      },
+      "badge": {
+        "border_radius": "999px",
+        "padding": "4px 10px",
+        "font_size": "12px"
+      },
+      "menu_item": {
+        "height": "44px",
+        "padding": "0 14px",
+        "border_radius": "10px",
+        "text_color": "#ffffff",
+        "hover_bg": "rgba(255,255,255,0.12)",
+        "active_bg": "rgba(255,255,255,0.18)"
+      }
+    },
+    "typography": {
+      "font_family": "Inter, Poppins, sans-serif",
+      "title_size": "28px",
+      "section_title": "22px",
+      "card_title": "15px",
+      "value_size": "32px",
+      "body_size": "14px",
+      "small_size": "12px",
+      "font_weight_regular": "400",
+      "font_weight_medium": "500",
+      "font_weight_bold": "700"
+    },
+    "charts": {
+      "grid_line": "#eef2f5",
+      "axis_text": "#6b7280",
+      "series_primary": "#0f7c8c",
+      "series_secondary": "#dceff2",
+      "pie_colors": [
+        "#0f7c8c",
+        "#2bb6c4",
+        "#4fd1dd",
+        "#d7f0f3"
+      ]
+    },
+    "effects": {
+      "hover_translateY": "-2px",
+      "transition": "all 0.25s ease",
+      "glass_effect": false
+    }
+  }
+}

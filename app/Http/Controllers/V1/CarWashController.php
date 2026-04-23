@@ -18,7 +18,7 @@ class CarWashController extends Controller
             'wash_type' => 'required|in:interior_exterior,exterior,interior',
             'scheduled_date' => 'required|date|after_or_equal:today',
             'scheduled_time' => 'required|date_format:H:i',
-            'time_period' => 'required|in:before_lunch,early_evening,dinner_time,late_night',
+            'time_period' => 'required|exists:car_wash_periods,period_key,is_active,1',
             'location_id' => 'nullable|exists:user_locations,id',
         ]);
 
@@ -96,42 +96,17 @@ class CarWashController extends Controller
 
     public function getTimePeriods(Request $request)
     {
-        $periodsData = [
-            'before_lunch' => [
-                'time_range' => '11:00 - 13:00',
-                'start_time' => '11:00',
-                'end_time' => '13:00',
-                'period_type' => 'afternoon',
-            ],
-            'early_evening' => [
-                'time_range' => '17:30 - 19:30',
-                'start_time' => '17:30',
-                'end_time' => '19:30',
-                'period_type' => 'evening',
-            ],
-            'dinner_time' => [
-                'time_range' => '19:30 - 21:30',
-                'start_time' => '19:30',
-                'end_time' => '21:30',
-                'period_type' => 'evening',
-            ],
-            'late_night' => [
-                'time_range' => '21:30 - 00:30',
-                'start_time' => '21:30',
-                'end_time' => '00:30',
-                'period_type' => 'evening',
-            ],
-        ];
+        $periodsData = \App\Models\CarWashPeriod::where('is_active', true)->get();
         
         $periods = [];
-        foreach ($periodsData as $period => $data) {
+        foreach ($periodsData as $data) {
             $periods[] = [
-                'period' => $period,
-                'name' => __("messages.car_wash.periods.{$period}"),
-                'time_range' => $data['time_range'],
-                'start_time' => $data['start_time'],
-                'end_time' => $data['end_time'],
-                'period_type' => $data['period_type'],
+                'period' => $data->period_key,
+                'name' => __("messages.car_wash.periods.{$data->period_key}"),
+                'time_range' => $data->time_range,
+                'start_time' => $data->start_time,
+                'end_time' => $data->end_time,
+                'period_type' => $data->period_type,
             ];
         }
         
@@ -140,17 +115,6 @@ class CarWashController extends Controller
 
     private function calculateCost($carSize, $washType)
     {
-        $key = "car_wash_price_{$carSize}_{$washType}";
-        
-        $defaults = [
-            'small_exterior' => 30,
-            'small_interior' => 40,
-            'small_interior_exterior' => 60,
-            'large_exterior' => 50,
-            'large_interior' => 60,
-            'large_interior_exterior' => 100,
-        ];
-
-        return \App\Models\SystemSetting::getValue($key, $defaults["{$carSize}_{$washType}"] ?? 50);
+        return \App\Models\SystemSetting::getValue("car_wash_price_{$carSize}_{$washType}", 50);
     }
 }
