@@ -231,5 +231,11 @@
     "September": "September",
     "October": "October",
     "November": "November",
-    "December": "December"
+    "December": "December",
+    "messages.order.no_agent_assigned": "No agent assigned to this order yet",
+    "messages.invalid_service_type": "Invalid service type",
+    "messages.order.updated": "Updated successfully",
+    "messages.order.loaded": "Data loaded successfully",
+    "messages.delivery_agent.not_delivery_agent": "Sorry, you are not a delivery agent",
+    "messages.reorder.invalid_type": "Invalid order type"
 }

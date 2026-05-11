@@ -239,5 +239,11 @@
     "Store": "متجر",
     "Delivery Package": "توصيل شحنة",
     "Car Wash Activity": "غسيل سيارات",
-    "Bike Rental Activity": "تأجير دباب"
+    "Bike Rental Activity": "تأجير دباب",
+    "messages.order.no_agent_assigned": "لم يتم تعيين مندوب لهذا الطلب بعد",
+    "messages.invalid_service_type": "نوع الخدمة غير صحيح",
+    "messages.order.updated": "تم التحديث بنجاح",
+    "messages.order.loaded": "تم تحميل البيانات",
+    "messages.delivery_agent.not_delivery_agent": "عفواً، أنت لست مندوب توصيل",
+    "messages.reorder.invalid_type": "نوع الطلب غير صالح"
 }

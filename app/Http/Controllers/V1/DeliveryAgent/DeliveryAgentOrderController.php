@@ -10,6 +10,9 @@ use App\Traits\ApiResponseTrait;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Support\Facades\Storage;
+use App\Models\DriverLocation;
+use App\Events\TaskLocationUpdated;
+
 
 class DeliveryAgentOrderController extends Controller
 {
@@ -239,7 +242,66 @@ class DeliveryAgentOrderController extends Controller
         ], __('messages.order.loaded'));
     }
 
+    public function updateLiveLocation(Request $request)
+    {
+        $user = auth()->user();
+        $validator = Validator::make($request->all(), [
+            'latitude' => 'required|numeric',
+            'longitude' => 'required|numeric',
+            'bearing' => 'nullable|numeric',
+        ]);
+
+        if ($validator->fails()) {
+            return $this->errorResponse($validator->errors()->first(), 422);
+        }
+
+        // 1. Update or Create Driver Location
+        DriverLocation::updateOrCreate(
+            ['user_id' => $user->id],
+            [
+                'latitude' => $request->latitude,
+                'longitude' => $request->longitude,
+                'bearing' => $request->bearing,
+            ]
+        );
+
+        // 2. Find Active Tasks and Broadcast
+        $activeTasks = $this->getRawActiveTasks($user->id);
+
+        foreach ($activeTasks as $task) {
+            broadcast(new TaskLocationUpdated(
+                $task['type'],
+                $task['id'],
+                $request->latitude,
+                $request->longitude,
+                $request->bearing
+            ));
+        }
+
+        return $this->successResponse(null, __('messages.order.updated'));
+    }
+
+    /**
+     * Helper to get active task IDs for broadcasting
+     */
+    private function getRawActiveTasks($agentId)
+    {
+        $tasks = [];
+
+        $orders = Order::where('delivery_agent_id', $agentId)->where('status', 'in_progress')->pluck('id');
+        foreach ($orders as $id) $tasks[] = ['type' => 'order', 'id' => $id];
+
+        $deliveries = Delivery::where('delivery_agent_id', $agentId)->where('status', 'in_progress')->pluck('id');
+        foreach ($deliveries as $id) $tasks[] = ['type' => 'delivery', 'id' => $id];
+
+        $carWashes = CarWash::where('delivery_agent_id', $agentId)->where('status', 'in_progress')->pluck('id');
+        foreach ($carWashes as $id) $tasks[] = ['type' => 'car_wash', 'id' => $id];
+
+        return $tasks;
+    }
+
     private function getModelByType($type)
+
     {
         switch ($type) {
             case 'order':

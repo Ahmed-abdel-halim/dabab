@@ -62,9 +62,9 @@ Route::middleware('auth:sanctum')->group(function () {
         Route::get('/', [OrderController::class, 'getMyOrders']);
         Route::post('/', [OrderController::class, 'createOrder']);
         Route::get('/{id}', [OrderController::class, 'getOrder']);
-        Route::post('/{id}/cancel', [OrderController::class, 'cancelOrder']);
-        Route::get('/{id}/track', [OrderController::class, 'trackOrder']);
         Route::post('/{id}/confirm', [OrderController::class, 'confirmOrder']);
+
+
         Route::post('/{id}/items', [OrderController::class, 'addOrderItem']);
         Route::put('/{orderId}/items/{itemId}', [OrderController::class, 'updateOrderItem']);
         Route::delete('/{orderId}/items/{itemId}', [OrderController::class, 'deleteOrderItem']);
@@ -82,9 +82,9 @@ Route::middleware('auth:sanctum')->group(function () {
         Route::get('/', [DeliveryController::class, 'getMyDeliveries']);
         Route::post('/', [DeliveryController::class, 'createDelivery']);
         Route::get('/{id}', [DeliveryController::class, 'getDelivery']);
-        Route::post('/{id}/cancel', [DeliveryController::class, 'cancelDelivery']);
-        Route::get('/{id}/track', [DeliveryController::class, 'trackDelivery']);
     });
+
+
 
     // Car Wash Routes
     Route::prefix('v1/car-washes')->group(function () {
@@ -93,8 +93,8 @@ Route::middleware('auth:sanctum')->group(function () {
         Route::get('/', [CarWashController::class, 'getMyCarWashes']);
         Route::post('/', [CarWashController::class, 'createCarWash']);
         Route::get('/{id}', [CarWashController::class, 'getCarWash']);
-        Route::post('/{id}/cancel', [CarWashController::class, 'cancelCarWash']);
     });
+
 
     // Rating Routes
     Route::prefix('v1/ratings')->group(function () {
@@ -106,6 +106,8 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::get('v1/all-orders', [AllOrdersController::class, 'getAllOrders']);
     Route::put('v1/all-orders/{type}/{id}', [AllOrdersController::class, 'updateService']);
     Route::delete('v1/all-orders/{type}/{id}', [AllOrdersController::class, 'deleteService']);
+    Route::get('v1/track/{type}/{id}', [AllOrdersController::class, 'liveTrack']);
+
 
     // Payment/Cards Routes
     Route::get('v1/payment-methods', [PaymentController::class, 'getPaymentMethods']);
@@ -133,7 +135,9 @@ Route::middleware('auth:sanctum')->group(function () {
         Route::get('/active', [DeliveryAgentOrderController::class, 'getMyActiveTasks']);
         Route::post('/{type}/{id}/status', [DeliveryAgentOrderController::class, 'updateTaskStatus']);
         Route::post('/{type}/{id}/proof', [DeliveryAgentOrderController::class, 'uploadTaskProof']);
+        Route::post('/update-location', [DeliveryAgentOrderController::class, 'updateLiveLocation']);
     });
+
 
     // Delivery Agent Settings/Profile Update
     Route::prefix('v1/delivery-agent/settings')->group(function () {

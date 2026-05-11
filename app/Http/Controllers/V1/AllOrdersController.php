@@ -254,6 +254,56 @@ class AllOrdersController extends Controller
         }
     }
 
+    public function liveTrack(Request $request, $type, $id)
+    {
+        $userId = $request->user()->id;
+        $model = $this->getModelByType($type);
+        if (!$model) {
+            return $this->errorResponse(__('messages.invalid_service_type'), 400);
+        }
+
+        $task = $model::where('id', $id)
+            ->where('user_id', $userId)
+            ->first();
+
+        if (!$task) {
+            return $this->errorResponse(__('messages.order.loaded'), 404);
+        }
+
+        if (!$task->delivery_agent_id) {
+            return $this->successResponse([
+                'type' => $type,
+                'id' => $id,
+                'status' => $task->status,
+                'location' => null
+            ], __('messages.order.loaded'));
+        }
+
+        $location = \App\Models\DriverLocation::where('user_id', $task->delivery_agent_id)->first();
+
+        return $this->successResponse([
+            'type' => $type,
+            'id' => $id,
+            'status' => $task->status,
+            'location' => $location
+        ], __('messages.order.loaded'));
+    }
+
+    private function getModelByType($type)
+    {
+        switch ($type) {
+            case 'order':
+                return Order::class;
+            case 'delivery':
+                return Delivery::class;
+            case 'car_wash':
+                return CarWash::class;
+            default:
+                return null;
+        }
+    }
+
+
     private function updateOrder(Request $request, $id, $userId)
     {
         $order = Order::where('user_id', $userId)

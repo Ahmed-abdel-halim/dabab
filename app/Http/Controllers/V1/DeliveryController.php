@@ -79,42 +79,9 @@ class DeliveryController extends Controller
         return $this->successResponse($delivery, __('messages.order.loaded'));
     }
 
-    public function cancelDelivery(Request $request, $id)
-    {
-        $delivery = Delivery::where('user_id', $request->user()->id)
-            ->whereIn('status', ['pending', 'in_progress'])
-            ->findOrFail($id);
-
-        $delivery->update(['status' => 'cancelled']);
-
-        return $this->successResponse($delivery, __('messages.order.cancelled'));
-    }
-
-    public function trackDelivery(Request $request, $id)
-    {
-        $delivery = Delivery::where('user_id', $request->user()->id)
-            ->findOrFail($id);
-
-        $tracking = [
-            'delivery' => $delivery,
-            'status' => $delivery->status,
-            'estimated_time' => $this->getEstimatedTime($delivery),
-        ];
-
-        return $this->successResponse($tracking, __('messages.order.tracking_info'));
-    }
-
-    private function getEstimatedTime($delivery)
-    {
-        if ($delivery->status === 'pending') {
-            return __('messages.order.estimated_time_pending');
-        } elseif ($delivery->status === 'in_progress') {
-            return __('messages.order.estimated_time_in_progress');
-        }
-        return null;
-    }
-
     private function calculateDeliveryCost($lat1, $lng1, $lat2, $lng2)
+
+
     {
         $earthRadius = 6371; // km
         $dLat = deg2rad($lat2 - $lat1);

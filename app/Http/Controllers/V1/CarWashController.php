@@ -64,18 +64,8 @@ class CarWashController extends Controller
         return $this->successResponse($carWash, __('messages.car_wash.loaded'));
     }
 
-    public function cancelCarWash(Request $request, $id)
-    {
-        $carWash = CarWash::where('user_id', $request->user()->id)
-            ->whereIn('status', ['pending', 'confirmed'])
-            ->findOrFail($id);
-
-        $carWash->update(['status' => 'cancelled']);
-
-        return $this->successResponse($carWash, __('messages.car_wash.cancelled'));
-    }
-
     public function getAvailableDates(Request $request)
+
     {
         $dates = [];
         

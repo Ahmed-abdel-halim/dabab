@@ -99,46 +99,9 @@ class OrderController extends Controller
         return $this->successResponse($order, __('messages.order.loaded'));
     }
 
-    public function cancelOrder(Request $request, $id)
-    {
-        $order = Order::where('user_id', $request->user()->id)
-            ->whereIn('status', ['pending', 'confirmed'])
-            ->findOrFail($id);
-
-        $order->update(['status' => 'cancelled']);
-
-        return $this->successResponse($order, __('messages.order.cancelled'));
-    }
-
-    public function trackOrder(Request $request, $id)
-    {
-        $order = Order::where('user_id', $request->user()->id)
-            ->with('location')
-            ->findOrFail($id);
-
-        $tracking = [
-            'order' => $order,
-            'status' => $order->status,
-            'estimated_time' => $this->getEstimatedTime($order),
-            'last_update' => $order->updated_at->format('Y-m-d H:i'),
-        ];
-
-        return $this->successResponse($tracking, __('messages.order.tracking_info'));
-    }
-
-    private function getEstimatedTime($order)
-    {
-        if ($order->status === 'pending') {
-            return __('messages.order.estimated_time_pending');
-        } elseif ($order->status === 'confirmed') {
-            return __('messages.order.estimated_time_confirmed');
-        } elseif ($order->status === 'in_progress') {
-            return __('messages.order.estimated_time_in_progress');
-        }
-        return null;
-    }
-
     public function confirmOrder(Request $request, $id)
+
+
     {
         $request->validate([
             'payment_method' => 'required|in:cash,apple_pay,bank_card',
